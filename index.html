@@ -19,8 +19,9 @@
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
 
   .sidebar { width: 248px; flex-shrink: 0; background: var(--teal-dark); min-height: 100vh; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; transition: width 0.25s ease; overflow: hidden; }
-  .sidebar.collapsed { width: 64px; }
-  .sidebar.collapsed .logo-img { width: 36px; }
+  .sidebar.collapsed { width: 56px; }
+  .sidebar.collapsed .logo-img { width: 32px; height: 32px; object-fit: contain; }
+  .sidebar.collapsed .founder-tag,
   .sidebar.collapsed .founder-name,
   .sidebar.collapsed .founder-role,
   .sidebar.collapsed .nav-label,
@@ -28,10 +29,10 @@
   .sidebar.collapsed .nav-badge,
   .sidebar.collapsed .coming-tag,
   .sidebar.collapsed .sidebar-footer { display: none; }
-  .sidebar.collapsed .nav-item { justify-content: center; padding: 10px; }
-  .sidebar.collapsed .logo-area { padding: 16px 14px; }
-  .sidebar.collapsed .founder-tag { justify-content: center; }
-  .sidebar.collapsed .founder-av { width: 32px; height: 32px; font-size: 12px; }
+  .sidebar.collapsed .nav-item { justify-content: center; padding: 10px 0; }
+  .sidebar.collapsed .logo-area { padding: 14px 10px; display: flex; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.09); }
+  .sidebar.collapsed .nav { padding: 12px 8px; align-items: center; }
+  .sidebar.collapsed .toggle-btn { left: 50%; transform: translateX(-50%); }
   .toggle-btn { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); width: 28px; height: 28px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 13px; transition: all 0.18s; z-index: 10; }
   .toggle-btn:hover { background: var(--teal); color: white; border-color: var(--teal); }
   .logo-area { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.09); }
@@ -419,12 +420,34 @@
     // Load meetings
     try {
       const mRes = await fetch('/.netlify/functions/db?key=meetings');
-      if (mRes.ok) { const d = await mRes.json(); if (d.data && Array.isArray(d.data)) meetings = d.data; }
-    } catch(e) {}
+      if (mRes.ok) {
+        const d = await mRes.json();
+        if (d.data && Array.isArray(d.data)) {
+          meetings = d.data;
+          localStorage.setItem('castler_v3_meetings', JSON.stringify(meetings));
+        } else {
+          meetings = JSON.parse(localStorage.getItem('castler_v3_meetings') || '[]');
+        }
+      } else {
+        meetings = JSON.parse(localStorage.getItem('castler_v3_meetings') || '[]');
+      }
+    } catch(e) {
+      meetings = JSON.parse(localStorage.getItem('castler_v3_meetings') || '[]');
+    }
     // Load extra columns
     try {
       const cRes = await fetch('/.netlify/functions/db?key=extraColumns');
-      if (cRes.ok) { const d = await cRes.json(); if (d.data && Array.isArray(d.data)) extraColumns = d.data; }
+      if (cRes.ok) {
+        const d = await cRes.json();
+        if (d.data && Array.isArray(d.data)) {
+          extraColumns = d.data;
+          localStorage.setItem('castler_v3_extraColumns', JSON.stringify(extraColumns));
+        } else {
+          extraColumns = JSON.parse(localStorage.getItem('castler_v3_extraColumns') || '[]');
+        }
+      } else {
+        extraColumns = JSON.parse(localStorage.getItem('castler_v3_extraColumns') || '[]');
+      }
     } catch(e) {
       extraColumns = JSON.parse(localStorage.getItem('castler_v3_extraColumns') || '[]');
     }
