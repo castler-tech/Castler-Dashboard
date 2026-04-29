@@ -16,7 +16,7 @@
     --radius: 14px; --radius-sm: 8px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 99vh; display: flex; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
 
   .sidebar { width: 248px; flex-shrink: 0; background: var(--teal-dark); min-height: 100vh; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; transition: width 0.25s ease; overflow: hidden; }
   .sidebar.collapsed { width: 64px; }
@@ -271,6 +271,7 @@
             <th style="width:100px">Members</th>
             <th style="width:110px">Status</th>
             <th style="width:100px">Due Date</th>
+            <th style="width:140px">Remarks</th>
             <th style="width:80px">Actions</th>
           </tr></thead>
           <tbody id="tasks-tbody"></tbody>
@@ -361,6 +362,10 @@
       <div class="form-row">
         <div class="form-group"><label>SPOC (Owner) *</label><select id="field-spoc"><option value="">Select SPOC...</option></select></div>
         <div class="form-group"><label>Due Date</label><input type="date" id="field-due"></div>
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="field-remarks" placeholder="Add comments or notes about this task..." style="min-height:70px"></textarea>
       </div>
       <div class="form-group">
         <label>Team Members</label>
@@ -709,6 +714,9 @@
         <td>${(t.members||[]).length?`<div class="member-avatars">${mavs}${more}</div>`:'<span style="color:var(--text-muted)">—</span>'}</td>
         <td><span class="status-badge ${t.status}" onclick="cycleStatus(${ri})"><span class="status-dot"></span>${statusLabel(t.status)}</span></td>
         <td><span class="due-date ${dueDateClass(t.due)}">${formatDate(t.due)}</span></td>
+        <td>
+          ${t.remarks ? `<div style="font-size:11.5px;color:var(--text-muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:italic" title="${t.remarks}">${t.remarks}</div>` : '<span style="color:var(--text-muted)">—</span>'}
+        </td>
         <td><div class="action-btns">
           <button class="icon-btn" onclick="editTask(${ri})">✏️</button>
           <button class="icon-btn del" onclick="deleteTask(${ri})">🗑️</button>
@@ -771,11 +779,11 @@
   function openModal(id=null) {
     editId=id; selectedMembers=[];
     document.getElementById('modal-title').textContent = id!==null?'Edit Task':'Add New Task';
-    ['field-name','field-desc'].forEach(f=>document.getElementById(f).value='');
+    ['field-name','field-desc','field-remarks'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('field-priority').value='medium';
     document.getElementById('field-status').value='todo';
     document.getElementById('field-due').value='';
-    if(id!==null){const t=tasks[id];document.getElementById('field-name').value=t.name;document.getElementById('field-desc').value=t.desc||'';document.getElementById('field-priority').value=t.priority;document.getElementById('field-status').value=t.status;document.getElementById('field-due').value=t.due||'';selectedMembers=[...(t.members||[])];}
+    if(id!==null){const t=tasks[id];document.getElementById('field-name').value=t.name;document.getElementById('field-desc').value=t.desc||'';document.getElementById('field-priority').value=t.priority;document.getElementById('field-status').value=t.status;document.getElementById('field-due').value=t.due||'';document.getElementById('field-remarks').value=t.remarks||'';selectedMembers=[...(t.members||[])];}
     buildMembersUI(); renderMembersDisplay();
     document.getElementById('members-options').classList.remove('open');
     document.getElementById('modal-overlay').classList.add('open');
@@ -787,7 +795,7 @@
   function saveTask() {
     const name = document.getElementById('field-name').value.trim();
     if(!name){document.getElementById('field-name').focus();return;}
-    const task = { name, desc:document.getElementById('field-desc').value.trim(), priority:document.getElementById('field-priority').value, status:document.getElementById('field-status').value, spoc:document.getElementById('field-spoc').value, due:document.getElementById('field-due').value, members:[...selectedMembers], createdAt:editId!==null?tasks[editId].createdAt:new Date().toISOString() };
+    const task = { name, desc:document.getElementById('field-desc').value.trim(), priority:document.getElementById('field-priority').value, status:document.getElementById('field-status').value, spoc:document.getElementById('field-spoc').value, due:document.getElementById('field-due').value, remarks:document.getElementById('field-remarks').value.trim(), members:[...selectedMembers], createdAt:editId!==null?tasks[editId].createdAt:new Date().toISOString() };
     if(editId!==null) tasks[editId]=task; else tasks.push(task);
     debounceSave(); renderTasks(); closeModal();
   }
