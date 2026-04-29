@@ -176,6 +176,31 @@
   .modal-footer { padding: 0 26px 22px; display: flex; gap: 9px; justify-content: flex-end; }
   .btn-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--text-muted); border-radius: var(--radius-sm); padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
   .btn-secondary:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+
+  /* MEETINGS TAB */
+  .meetings-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
+  .meetings-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filter-select { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-muted); cursor: pointer; outline: none; }
+  .filter-select:focus { border-color: var(--teal); }
+  .m-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; cursor: pointer; transition: all 0.14s; border: 1.5px solid transparent; white-space: nowrap; }
+  .m-status.scheduled { background: var(--teal-light); color: var(--teal-dark); border-color: #b3e8ec; }
+  .m-status.tobe { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+  .m-status.done { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+  .linkedin-link { color: var(--teal); text-decoration: none; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+  .linkedin-link:hover { color: var(--teal-dark); text-decoration: underline; }
+  .about-cell { font-size: 12px; color: var(--text-muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .remarks-cell { font-size: 12px; color: var(--text-muted); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; }
+  /* Custom columns */
+  .col-manager { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .col-manager-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; }
+  .col-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--teal-light); color: var(--teal-dark); font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .col-tag.default { opacity: 0.6; cursor: default; }
+  .col-tag button { background: none; border: none; cursor: pointer; color: var(--teal); padding: 0; font-size: 12px; line-height: 1; }
+  .add-col-input { display: flex; gap: 6px; }
+  .add-col-input input { padding: 5px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 12px; outline: none; width: 140px; }
+  .add-col-input input:focus { border-color: var(--teal); }
+  .add-col-btn { padding: 5px 12px; background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .add-col-btn:hover { background: var(--teal-dark); }
 </style>
 </head>
 <body>
@@ -201,6 +226,7 @@
   <nav class="nav">
     <div class="nav-label">Workspace</div>
     <div class="nav-item active" onclick="switchTab('tasks', this)"><span class="nav-icon">✅</span> Task Tracker <span class="nav-badge" id="task-badge">0</span></div>
+    <div class="nav-item" onclick="switchTab('meetings', this)"><span class="nav-icon">📅</span> Meetings</div>
 
   </nav>
   <div class="sidebar-footer">Castler Dashboard · v2.0</div>
@@ -253,6 +279,60 @@
           <div class="empty-icon">📋</div>
           <h3>No tasks yet</h3>
           <p>Click "Add Task" to get started</p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MEETINGS TAB -->
+    <div class="tab-content" id="tab-meetings">
+
+      <!-- Column Manager -->
+      <div class="col-manager">
+        <span class="col-manager-title">Columns:</span>
+        <span class="col-tag default">Name</span>
+        <span class="col-tag default">City</span>
+        <span class="col-tag default">LinkedIn</span>
+        <span class="col-tag default">About</span>
+        <span class="col-tag default">Remarks</span>
+        <span class="col-tag default">Status</span>
+        <div id="extra-col-tags"></div>
+        <div class="add-col-input">
+          <input type="text" id="new-col-input" placeholder="Add column...">
+          <button class="add-col-btn" onclick="addColumn()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="meetings-toolbar">
+        <div class="meetings-filters">
+          <div class="search-box" style="min-width:180px">
+            <span style="color:var(--text-muted)">🔍</span>
+            <input type="text" id="m-search" placeholder="Search meetings..." oninput="renderMeetings()">
+          </div>
+          <select class="filter-select" id="m-city-filter" onchange="renderMeetings()">
+            <option value="">All Cities</option>
+          </select>
+          <select class="filter-select" id="m-status-filter" onchange="renderMeetings()">
+            <option value="">All Statuses</option>
+            <option value="tobe">To Be Scheduled</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="openMeetingModal()">＋ Add Meeting</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table id="meetings-table">
+          <thead id="meetings-thead"></thead>
+          <tbody id="meetings-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="meetings-empty">
+          <div class="empty-icon">📅</div>
+          <h3>No meetings yet</h3>
+          <p>Click "Add Meeting" to get started</p>
         </div>
       </div>
     </div>
@@ -331,6 +411,18 @@
   // On load: server data takes priority over local data
 
   async function loadFromServer() {
+    // Load meetings
+    try {
+      const mRes = await fetch('/.netlify/functions/db?key=meetings');
+      if (mRes.ok) { const d = await mRes.json(); if (d.data && Array.isArray(d.data)) meetings = d.data; }
+    } catch(e) {}
+    // Load extra columns
+    try {
+      const cRes = await fetch('/.netlify/functions/db?key=extraColumns');
+      if (cRes.ok) { const d = await cRes.json(); if (d.data && Array.isArray(d.data)) extraColumns = d.data; }
+    } catch(e) {
+      extraColumns = JSON.parse(localStorage.getItem('castler_v3_extraColumns') || '[]');
+    }
     let serverWorking = false;
     try {
       const res = await fetch('/.netlify/functions/db?key=tasks');
@@ -375,21 +467,17 @@
     // Save to localStorage immediately as backup
     localStorage.setItem('castler_v3_tasks', JSON.stringify(tasks));
     localStorage.setItem('castler_v3_members', JSON.stringify(members));
+    localStorage.setItem('castler_v3_meetings', JSON.stringify(meetings));
+    localStorage.setItem('castler_v3_extraColumns', JSON.stringify(extraColumns));
 
     // Save to Netlify Blobs
     let saved = false;
     try {
       const [r1, r2] = await Promise.all([
-        fetch('/.netlify/functions/db?key=tasks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: tasks })
-        }),
-        fetch('/.netlify/functions/db?key=members', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: members })
-        })
+        fetch('/.netlify/functions/db?key=tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: tasks}) }),
+        fetch('/.netlify/functions/db?key=members', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: members}) }),
+        fetch('/.netlify/functions/db?key=meetings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: meetings}) }),
+        fetch('/.netlify/functions/db?key=extraColumns', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: extraColumns}) })
       ]);
       saved = r1.ok && r2.ok;
     } catch(e) {}
@@ -419,6 +507,167 @@
     el.textContent = msg || '✓ Saved'; el.className = 'save-indicator saved';
     setTimeout(() => { el.textContent = ''; el.className = 'save-indicator'; }, 3000);
   }
+
+
+  // ---- MEETINGS ----
+  let meetings = [];
+  let extraColumns = [];
+  let editMeetingId = null;
+
+  function mStatusLabel(s) { return {tobe:'To Be Scheduled', scheduled:'Scheduled', done:'Done'}[s] || s; }
+
+  function renderMeetingHeaders() {
+    const thead = document.getElementById('meetings-thead');
+    const extraCols = extraColumns.map(c => `<th>${c}</th>`).join('');
+    thead.innerHTML = `<tr>
+      <th style="width:32px">#</th>
+      <th>Name</th>
+      <th style="width:100px">City</th>
+      <th style="width:110px">LinkedIn</th>
+      <th>About</th>
+      <th>Remarks</th>
+      <th style="width:120px">Status</th>
+      ${extraCols}
+      <th style="width:70px">Actions</th>
+    </tr>`;
+  }
+
+  function updateCityFilter() {
+    const sel = document.getElementById('m-city-filter');
+    const cur = sel.value;
+    const cities = [...new Set(meetings.map(m => m.city).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
+  }
+
+  function renderMeetings() {
+    renderMeetingHeaders();
+    updateCityFilter();
+    const q = (document.getElementById('m-search')?.value || '').toLowerCase();
+    const city = document.getElementById('m-city-filter')?.value || '';
+    const status = document.getElementById('m-status-filter')?.value || '';
+
+    const filtered = meetings.filter(m => {
+      const mq = !q || (m.name||'').toLowerCase().includes(q) || (m.about||'').toLowerCase().includes(q) || (m.city||'').toLowerCase().includes(q);
+      const mc = !city || m.city === city;
+      const ms = !status || m.status === status;
+      return mq && mc && ms;
+    });
+
+    const tbody = document.getElementById('meetings-tbody');
+    const empty = document.getElementById('meetings-empty');
+
+    if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map((m, i) => {
+      const ri = meetings.indexOf(m);
+      const extraCells = extraColumns.map(c => `<td><span style="font-size:12px;color:var(--text-muted)">${m.extra?.[c] || '—'}</span></td>`).join('');
+      const li = m.linkedin ? `<a href="${m.linkedin}" target="_blank" class="linkedin-link">🔗 LinkedIn</a>` : '<span style="color:var(--text-muted);font-size:12px">—</span>';
+      return `<tr>
+        <td style="color:var(--text-muted);font-size:12px;font-weight:600">${i+1}</td>
+        <td><div class="task-name">${m.name||'—'}</div></td>
+        <td><span style="font-size:12px">${m.city||'—'}</span></td>
+        <td>${li}</td>
+        <td><div class="about-cell" title="${m.about||''}">${m.about||'—'}</div></td>
+        <td><div class="remarks-cell" title="${m.remarks||''}">${m.remarks||'—'}</div></td>
+        <td><span class="m-status ${m.status||'tobe'}" onclick="cycleMStatus(${ri})">${mStatusLabel(m.status||'tobe')}</span></td>
+        ${extraCells}
+        <td><div class="action-btns">
+          <button class="icon-btn" onclick="editMeeting(${ri})">✏️</button>
+          <button class="icon-btn del" onclick="deleteMeeting(${ri})">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  const M_STATUS = ['tobe','scheduled','done'];
+  function cycleMStatus(i) {
+    meetings[i].status = M_STATUS[(M_STATUS.indexOf(meetings[i].status||'tobe')+1)%M_STATUS.length];
+    debounceSave(); renderMeetings();
+  }
+
+  function addColumn() {
+    const inp = document.getElementById('new-col-input');
+    const name = inp.value.trim();
+    if (!name || extraColumns.includes(name)) { inp.value = ''; return; }
+    extraColumns.push(name); inp.value = '';
+    renderExtraColTags(); renderMeetings(); renderExtraFields();
+    debounceSave();
+  }
+
+  function removeColumn(name) {
+    extraColumns = extraColumns.filter(c => c !== name);
+    renderExtraColTags(); renderMeetings(); renderExtraFields();
+    debounceSave();
+  }
+
+  function renderExtraColTags() {
+    document.getElementById('extra-col-tags').innerHTML = extraColumns.map(c =>
+      `<span class="col-tag">${c} <button onclick="removeColumn('${c}')">✕</button></span>`
+    ).join('');
+  }
+
+  function renderExtraFields() {
+    const container = document.getElementById('extra-fields-container');
+    if (!container) return;
+    container.innerHTML = extraColumns.map(c => `
+      <div class="form-group">
+        <label>${c}</label>
+        <input type="text" id="mex-${c.replace(/\s+/g,'-')}" placeholder="${c}...">
+      </div>`).join('');
+  }
+
+  function openMeetingModal(id = null) {
+    editMeetingId = id;
+    document.getElementById('meeting-modal-title').textContent = id !== null ? 'Edit Meeting' : 'Add Meeting';
+    document.getElementById('m-name').value = '';
+    document.getElementById('m-city').value = '';
+    document.getElementById('m-linkedin').value = '';
+    document.getElementById('m-about').value = '';
+    document.getElementById('m-remarks').value = '';
+    document.getElementById('m-status').value = 'tobe';
+    renderExtraFields();
+    if (id !== null) {
+      const m = meetings[id];
+      document.getElementById('m-name').value = m.name || '';
+      document.getElementById('m-city').value = m.city || '';
+      document.getElementById('m-linkedin').value = m.linkedin || '';
+      document.getElementById('m-about').value = m.about || '';
+      document.getElementById('m-remarks').value = m.remarks || '';
+      document.getElementById('m-status').value = m.status || 'tobe';
+      extraColumns.forEach(c => {
+        const el = document.getElementById('mex-' + c.replace(/\s+/g,'-'));
+        if (el) el.value = m.extra?.[c] || '';
+      });
+    }
+    document.getElementById('meeting-modal-overlay').classList.add('open');
+  }
+
+  function closeMeetingModal() { document.getElementById('meeting-modal-overlay').classList.remove('open'); }
+  function handleMeetingOverlayClick(e) { if (e.target === document.getElementById('meeting-modal-overlay')) closeMeetingModal(); }
+
+  function saveMeeting() {
+    const name = document.getElementById('m-name').value.trim();
+    if (!name) { document.getElementById('m-name').focus(); return; }
+    const extra = {};
+    extraColumns.forEach(c => {
+      const el = document.getElementById('mex-' + c.replace(/\s+/g,'-'));
+      if (el) extra[c] = el.value.trim();
+    });
+    const meeting = {
+      name, city: document.getElementById('m-city').value.trim(),
+      linkedin: document.getElementById('m-linkedin').value.trim(),
+      about: document.getElementById('m-about').value.trim(),
+      remarks: document.getElementById('m-remarks').value.trim(),
+      status: document.getElementById('m-status').value,
+      extra, createdAt: editMeetingId !== null ? meetings[editMeetingId].createdAt : new Date().toISOString()
+    };
+    if (editMeetingId !== null) meetings[editMeetingId] = meeting; else meetings.push(meeting);
+    debounceSave(); renderMeetings(); closeMeetingModal();
+  }
+
+  function editMeeting(i) { openMeetingModal(i); }
+  function deleteMeeting(i) { if (confirm('Delete this meeting?')) { meetings.splice(i,1); debounceSave(); renderMeetings(); } }
 
   // ---- RENDER ----
   function formatDate(s) { if(!s) return '—'; const d=new Date(s); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
@@ -557,9 +806,59 @@
   // ---- INIT ----
   loadFromServer().then(() => {
     renderTasks();
+    renderMeetings();
+    renderExtraColTags();
     document.getElementById('loading-overlay').classList.add('hidden');
     setTimeout(() => document.getElementById('loading-overlay').remove(), 500);
   });
 </script>
+
+<!-- MEETING MODAL -->
+<div class="modal-overlay" id="meeting-modal-overlay" onclick="handleMeetingOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="meeting-modal-title">Add Meeting</div>
+      <button class="modal-close" onclick="closeMeetingModal()">✕</button>
+    </div>
+    <div class="modal-body" id="meeting-modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" id="m-name" placeholder="e.g. Ashish Narain Agarwal">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="m-city" placeholder="e.g. Mumbai">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="text" id="m-linkedin" placeholder="https://linkedin.com/in/...">
+      </div>
+      <div class="form-group">
+        <label>About</label>
+        <input type="text" id="m-about" placeholder="e.g. Founder & MD of PropertyPistol">
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="m-remarks" placeholder="Any notes or remarks..." style="min-height:60px"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="m-status">
+          <option value="tobe">To Be Scheduled</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+      <div id="extra-fields-container"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeMeetingModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveMeeting()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
