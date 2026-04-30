@@ -330,6 +330,21 @@
     .stat-num { font-size: 22px; }
   }
 
+
+  /* APPLICATIONS TAB */
+  .app-type { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .app-type.membership { background: #ede9fe; color: #6d28d9; }
+  .app-type.pitch { background: #fff7ed; color: #c2410c; }
+  .app-type.grant { background: #f0fdf4; color: #166534; }
+  .app-type.other { background: #f1f5f9; color: #475569; }
+  .app-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: all 0.14s; border: 1.5px solid transparent; white-space: nowrap; }
+  .app-status:hover { transform: scale(1.04); }
+  .app-status.todo { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+  .app-status.inprogress { background: var(--teal-light); color: var(--teal-dark); border-color: #b3e8ec; }
+  .app-status.submitted { background: var(--gold-light); color: #a06f10; border-color: #f0d48a; }
+  .app-status.accepted { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+  .app-status.rejected { background: #fff0f0; color: #c53030; border-color: #feb2b2; }
+
 </style>
 </head>
 <body>
@@ -356,6 +371,7 @@
     <div class="nav-label">Workspace</div>
     <div class="nav-item active" onclick="switchTab('tasks', this)"><span class="nav-icon">✅</span> Task Tracker <span class="nav-badge" id="task-badge">0</span></div>
     <div class="nav-item" onclick="switchTab('meetings', this)"><span class="nav-icon">📅</span> Meetings</div>
+    <div class="nav-item" onclick="switchTab('applications', this)"><span class="nav-icon">📋</span> Applications</div>
 
   </nav>
   <div class="sidebar-footer">Castler Dashboard · v2.0</div>
@@ -467,6 +483,61 @@
       </div>
     </div>
 
+    <!-- APPLICATIONS TAB -->
+    <div class="tab-content" id="tab-applications">
+
+      <!-- Toolbar -->
+      <div class="meetings-toolbar">
+        <div class="meetings-filters">
+          <div class="search-box" style="min-width:180px">
+            <span style="color:var(--text-muted)">🔍</span>
+            <input type="text" id="app-search" placeholder="Search applications..." oninput="renderApplications()">
+          </div>
+          <select class="filter-select" id="app-type-filter" onchange="renderApplications()">
+            <option value="">All Types</option>
+            <option value="membership">Membership</option>
+            <option value="pitch">Pitch</option>
+            <option value="grant">Grant</option>
+            <option value="other">Other</option>
+          </select>
+          <select class="filter-select" id="app-status-filter" onchange="renderApplications()">
+            <option value="">All Statuses</option>
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="submitted">Submitted</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="openAppModal()">＋ Add Application</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:32px">#</th>
+              <th>Application Name</th>
+              <th style="width:100px">Type</th>
+              <th style="width:110px">SPOC</th>
+              <th>About</th>
+              <th style="width:120px">Status</th>
+              <th style="width:100px">Due Date</th>
+              <th style="min-width:160px">Remarks</th>
+              <th style="width:80px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="apps-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="apps-empty">
+          <div class="empty-icon">📋</div>
+          <h3>No applications yet</h3>
+          <p>Click "Add Application" to get started</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -545,6 +616,15 @@
   // On load: server data takes priority over local data
 
   async function loadFromServer() {
+    // Load applications
+    try {
+      const aRes = await fetch('/.netlify/functions/db?key=applications');
+      if (aRes.ok) {
+        const d = await aRes.json();
+        if (d.data && Array.isArray(d.data)) { applications = d.data; localStorage.setItem('castler_v3_applications', JSON.stringify(applications)); }
+        else { applications = JSON.parse(localStorage.getItem('castler_v3_applications') || '[]'); }
+      } else { applications = JSON.parse(localStorage.getItem('castler_v3_applications') || '[]'); }
+    } catch(e) { applications = JSON.parse(localStorage.getItem('castler_v3_applications') || '[]'); }
     // Load meetings
     try {
       const mRes = await fetch('/.netlify/functions/db?key=meetings');
@@ -552,7 +632,8 @@
         const d = await mRes.json();
         if (d.data && Array.isArray(d.data)) {
           meetings = d.data;
-          localStorage.setItem('castler_v3_meetings', JSON.stringify(meetings));
+          localStorage.setItem('castler_v3_applications', JSON.stringify(applications));
+    localStorage.setItem('castler_v3_meetings', JSON.stringify(meetings));
         } else {
           meetings = JSON.parse(localStorage.getItem('castler_v3_meetings') || '[]');
         }
@@ -623,6 +704,7 @@
     // Save to localStorage immediately as backup
     localStorage.setItem('castler_v3_tasks', JSON.stringify(tasks));
     localStorage.setItem('castler_v3_members', JSON.stringify(members));
+    localStorage.setItem('castler_v3_applications', JSON.stringify(applications));
     localStorage.setItem('castler_v3_meetings', JSON.stringify(meetings));
     localStorage.setItem('castler_v3_extraColumns', JSON.stringify(extraColumns));
 
@@ -632,6 +714,7 @@
       const [r1, r2] = await Promise.all([
         fetch('/.netlify/functions/db?key=tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: tasks}) }),
         fetch('/.netlify/functions/db?key=members', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: members}) }),
+        fetch('/.netlify/functions/db?key=applications', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: applications}) }),
         fetch('/.netlify/functions/db?key=meetings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: meetings}) }),
         fetch('/.netlify/functions/db?key=extraColumns', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data: extraColumns}) })
       ]);
@@ -664,6 +747,112 @@
     setTimeout(() => { el.textContent = ''; el.className = 'save-indicator'; }, 3000);
   }
 
+
+
+  // ---- APPLICATIONS ----
+  let applications = [];
+  let editAppId = null;
+
+  function appTypeLabel(t) { return {membership:'Membership', pitch:'Pitch', grant:'Grant', other:'Other'}[t] || t; }
+  function appStatusLabel(s) { return {todo:'To Do', inprogress:'In Progress', submitted:'Submitted', accepted:'Accepted', rejected:'Rejected'}[s] || s; }
+
+
+
+  function renderApplications() {
+    const q = (document.getElementById('app-search')?.value || '').toLowerCase();
+    const type = document.getElementById('app-type-filter')?.value || '';
+    const status = document.getElementById('app-status-filter')?.value || '';
+
+    const filtered = applications.filter(a => {
+      const mq = !q || (a.name||'').toLowerCase().includes(q) || (a.about||'').toLowerCase().includes(q) || (a.spoc||'').toLowerCase().includes(q);
+      const mt = !type || a.type === type;
+      const ms = !status || a.status === status;
+      return mq && mt && ms;
+    });
+
+    const tbody = document.getElementById('apps-tbody');
+    const empty = document.getElementById('apps-empty');
+
+    if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map((a, i) => {
+      const ri = applications.indexOf(a);
+      const dueClass = a.due ? ((new Date(a.due) - new Date()) / (1000*60*60*24) < 0 ? 'color:#e53e3e;font-weight:600' : (new Date(a.due) - new Date()) / (1000*60*60*24) < 3 ? 'color:var(--gold);font-weight:600' : '') : '';
+      return `<tr>
+        <td style="color:var(--text-muted);font-size:12px;font-weight:600">${i+1}</td>
+        <td><div class="task-name">${a.name||'—'}</div></td>
+        <td><span class="app-type ${a.type||'other'}">${appTypeLabel(a.type||'other')}</span></td>
+        <td>${a.spoc ? `<span class="spoc-chip">${a.spoc}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+        <td><div style="font-size:12px;color:var(--text-muted);max-width:200px">${a.about||'—'}</div></td>
+        <td><span class="app-status ${a.status||'todo'}" onclick="cycleAppStatus(${ri})"><span class="status-dot"></span>${appStatusLabel(a.status||'todo')}</span></td>
+        <td><span style="font-size:12px;${dueClass}">${a.due ? new Date(a.due).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</span></td>
+        <td><div style="font-size:12px;color:var(--text-muted);white-space:pre-wrap;word-break:break-word;line-height:1.5">${a.remarks||'—'}</div></td>
+        <td><div class="action-btns">
+          <button class="icon-btn" onclick="editApp(${ri})">✏️</button>
+          <button class="icon-btn del" onclick="deleteApp(${ri})">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  const APP_STATUS = ['todo','inprogress','submitted','accepted','rejected'];
+  function cycleAppStatus(i) {
+    applications[i].status = APP_STATUS[(APP_STATUS.indexOf(applications[i].status||'todo')+1)%APP_STATUS.length];
+    debounceSave(); renderApplications();
+  }
+
+  function buildAppSpoc() {
+    const sel = document.getElementById('app-spoc');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Select SPOC...</option>' + members.map(m => `<option value="${m}"${m===cur?' selected':''}>${m}</option>`).join('');
+  }
+
+  function openAppModal(id = null) {
+    editAppId = id;
+    document.getElementById('app-modal-title').textContent = id !== null ? 'Edit Application' : 'Add Application';
+    document.getElementById('app-name').value = '';
+    document.getElementById('app-type').value = 'membership';
+    document.getElementById('app-about').value = '';
+    document.getElementById('app-status').value = 'todo';
+    document.getElementById('app-due').value = '';
+    document.getElementById('app-remarks').value = '';
+    buildAppSpoc();
+    if (id !== null) {
+      const a = applications[id];
+      document.getElementById('app-name').value = a.name || '';
+      document.getElementById('app-type').value = a.type || 'membership';
+      document.getElementById('app-about').value = a.about || '';
+      document.getElementById('app-status').value = a.status || 'todo';
+      document.getElementById('app-due').value = a.due || '';
+      document.getElementById('app-remarks').value = a.remarks || '';
+      document.getElementById('app-spoc').value = a.spoc || '';
+    }
+    document.getElementById('app-modal-overlay').classList.add('open');
+  }
+
+  function closeAppModal() { document.getElementById('app-modal-overlay').classList.remove('open'); }
+  function handleAppOverlayClick(e) { if (e.target === document.getElementById('app-modal-overlay')) closeAppModal(); }
+
+  function saveApplication() {
+    const name = document.getElementById('app-name').value.trim();
+    if (!name) { document.getElementById('app-name').focus(); return; }
+    const app = {
+      name,
+      type: document.getElementById('app-type').value,
+      spoc: document.getElementById('app-spoc').value,
+      about: document.getElementById('app-about').value.trim(),
+      status: document.getElementById('app-status').value,
+      due: document.getElementById('app-due').value,
+      remarks: document.getElementById('app-remarks').value.trim(),
+      createdAt: editAppId !== null ? applications[editAppId].createdAt : new Date().toISOString()
+    };
+    if (editAppId !== null) applications[editAppId] = app; else applications.push(app);
+    debounceSave(); renderApplications(); closeAppModal();
+  }
+
+  function editApp(i) { openAppModal(i); }
+  function deleteApp(i) { if (confirm('Delete this application?')) { applications.splice(i,1); debounceSave(); renderApplications(); } }
 
   // ---- MEETINGS ----
   let meetings = [];
@@ -965,6 +1154,7 @@
   // ---- INIT ----
   loadFromServer().then(() => {
     renderTasks();
+    renderApplications();
     renderMeetings();
     renderExtraColTags();
     document.getElementById('loading-overlay').classList.add('hidden');
@@ -1019,5 +1209,124 @@
   </div>
 </div>
 
+
+<!-- APPLICATION MODAL -->
+<div class="modal-overlay" id="app-modal-overlay" onclick="handleAppOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="app-modal-title">Add Application</div>
+      <button class="modal-close" onclick="closeAppModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Application Name *</label>
+        <input type="text" id="app-name" placeholder="e.g. YCombinator W25, NASSCOM Membership">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type *</label>
+          <select id="app-type">
+            <option value="membership">Membership</option>
+            <option value="pitch">Pitch</option>
+            <option value="grant">Grant</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>SPOC (Owner)</label>
+          <select id="app-spoc"><option value="">Select SPOC...</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>About</label>
+        <textarea id="app-about" placeholder="Brief description of the application..." style="min-height:60px"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="app-status">
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="submitted">Submitted</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="app-due">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="app-remarks" placeholder="Any notes or comments..." style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeAppModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveApplication()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- APPLICATION MODAL -->
+<div class="modal-overlay" id="app-modal-overlay" onclick="handleAppOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="app-modal-title">Add Application</div>
+      <button class="modal-close" onclick="closeAppModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Application Name *</label>
+        <input type="text" id="app-name" placeholder="e.g. YCombinator W25, NASSCOM Membership">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type *</label>
+          <select id="app-type">
+            <option value="membership">Membership</option>
+            <option value="pitch">Pitch</option>
+            <option value="grant">Grant</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>SPOC (Owner)</label>
+          <select id="app-spoc"><option value="">Select SPOC...</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>About</label>
+        <textarea id="app-about" placeholder="Brief description of the application..." style="min-height:60px"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="app-status">
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="submitted">Submitted</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="app-due">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="app-remarks" placeholder="Any notes or comments..." style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeAppModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveApplication()">💾 Save</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
