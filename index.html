@@ -462,6 +462,9 @@
           </select>
           <select class="filter-select" id="m-status-filter" onchange="renderMeetings()">
             <option value="">All Statuses</option>
+            <option value="tobe">To Be Scheduled</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="done">Done</option>
           </select>
         </div>
         <button class="btn-primary" onclick="openMeetingModal()">＋ Add Meeting</button>
@@ -830,15 +833,10 @@
   }
 
   function updateCityFilter() {
-    const citySel = document.getElementById('m-city-filter');
-    const curCity = citySel.value;
+    const sel = document.getElementById('m-city-filter');
+    const cur = sel.value;
     const cities = [...new Set(meetings.map(m => m.city).filter(Boolean))].sort();
-    citySel.innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}"${c===curCity?' selected':''}>${c}</option>`).join('');
-
-    const statusSel = document.getElementById('m-status-filter');
-    const curStatus = statusSel.value;
-    const statuses = [...new Set(meetings.map(m => m.status).filter(Boolean))].sort();
-    statusSel.innerHTML = '<option value="">All Statuses</option>' + statuses.map(s => `<option value="${s}"${s===curStatus?' selected':''}>${s}</option>`).join('');
+    sel.innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
   }
 
   function renderMeetings() {
@@ -851,7 +849,7 @@
     const filtered = meetings.filter(m => {
       const mq = !q || (m.name||'').toLowerCase().includes(q) || (m.about||'').toLowerCase().includes(q) || (m.city||'').toLowerCase().includes(q);
       const mc = !city || m.city === city;
-      const ms = !status || (m.status||'').toLowerCase().includes(status.toLowerCase());
+      const ms = !status || m.status === status;
       return mq && mc && ms;
     });
 
@@ -872,7 +870,7 @@
         <td>${li}</td>
         <td><div class="about-cell" title="${m.about||''}">${m.about||'—'}</div></td>
         <td><div class="remarks-cell" title="${m.remarks||''}">${m.remarks||'—'}</div></td>
-        <td><span style="display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--teal-light);color:var(--teal-dark);border:1.5px solid #b3e8ec">${m.status||'—'}</span></td>
+        <td><span class="m-status ${m.status||'tobe'}" onclick="cycleMStatus(${ri})">${mStatusLabel(m.status||'tobe')}</span></td>
         ${extraCells}
         <td><div class="action-btns">
           <button class="icon-btn" onclick="editMeeting(${ri})">✏️</button>
@@ -883,6 +881,14 @@
   }
 
 
+
+  function mStatusLabel(s) { return {tobe:'To Be Scheduled', scheduled:'Scheduled', done:'Done'}[s] || s; }
+
+  const M_STATUS = ['tobe','scheduled','done'];
+  function cycleMStatus(i) {
+    meetings[i].status = M_STATUS[(M_STATUS.indexOf(meetings[i].status||'tobe')+1)%M_STATUS.length];
+    debounceSave(); renderMeetings();
+  }
 
   function addColumn() {
     const inp = document.getElementById('new-col-input');
@@ -1147,7 +1153,11 @@
       </div>
       <div class="form-group">
         <label>Status</label>
-        <input type="text" id="m-status" placeholder="e.g. Scheduled, Follow up pending, Done...">
+        <select id="m-status">
+          <option value="tobe">To Be Scheduled</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="done">Done</option>
+        </select>
       </div>
       <div id="extra-fields-container"></div>
     </div>
