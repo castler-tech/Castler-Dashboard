@@ -8,25 +8,25 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --teal:#00909c; --teal-dark:#004452; --teal-light:#e0f5f7; --teal-mid:#007a85;
+  --teal:#00909c; --teal-dark:#004452; --teal-light:#e6f5f7; --teal-mid:#007a85;
   --gold:#ca9324; --gold-light:#fdf3e0;
   --hot:#e53e3e; --success:#22c55e; --purple:#8b5cf6;
-  --bg:#f0f4f5; --white:#fff; --text:#1a2e33; --text-muted:#5a7a82;
-  --border:#d4e8eb; --card-dark:#0d1b1e;
-  --shadow:0 2px 16px rgba(0,68,82,.07); --shadow-md:0 6px 32px rgba(0,68,82,.13);
-  --radius:14px; --radius-sm:8px;
-  --nav-h:60px; --top-h:54px;
+  --bg:#f2f6f7; --white:#fff; --text:#1a2e33; --text-muted:#6b8a91;
+  --border:#ddeaec; --card-dark:#0c1a1d;
+  --shadow:0 1px 12px rgba(0,68,82,.08);
+  --radius:16px; --radius-sm:10px;
+  --nav-h:58px; --top-h:52px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
 /* ── TOP BAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;height:var(--top-h);background:var(--teal-dark);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 2px 12px rgba(0,0,0,.25);}
 .topbar-left{display:flex;align-items:center;gap:10px;}
-.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff;letter-spacing:-0.5px;}
+.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#fff;letter-spacing:-0.5px;}
 .topbar-logo span{color:var(--teal);}
 .topbar-event{display:flex;flex-direction:column;}
-.topbar-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,.9);}
+.topbar-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,.85);}
 .topbar-sub{font-size:10px;color:rgba(255,255,255,.4);}
 .sync-dot{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);transition:all .3s;}
 .sync-dot.ok{background:rgba(34,197,94,.2);color:#86efac;}
@@ -36,40 +36,35 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .sec{display:none;animation:fadeUp .25s ease;}
 .sec.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.pad{padding:0 14px;}
+.pad{padding:0 16px;}
 
 /* ── BOTTOM NAV ── */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--teal-dark);z-index:100;display:flex;box-shadow:0 -2px 12px rgba(0,0,0,.2);}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.4);font-size:9.5px;font-weight:600;letter-spacing:.3px;transition:color .15s;padding:6px 2px;text-transform:uppercase;}
-.nav-btn i{font-size:18px;transition:color .15s;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.4);font-size:9px;font-weight:600;letter-spacing:.2px;transition:color .15s;padding:5px 2px;text-transform:uppercase;}
+.nav-btn i{font-size:20px;transition:color .15s;}
 .nav-btn.active{color:#fff;}
 .nav-btn.active i{color:var(--teal);}
-.more-panel{position:fixed;bottom:var(--nav-h);left:0;right:0;background:var(--teal-dark);z-index:99;transform:translateY(100%);transition:transform .28s ease;border-top:1px solid rgba(255,255,255,.08);padding:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.more-panel.open{transform:translateY(0);}
-.more-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:rgba(255,255,255,.06);border-radius:10px;cursor:pointer;color:rgba(255,255,255,.65);font-size:11px;font-weight:600;transition:all .15s;}
-.more-item i{font-size:20px;color:var(--teal);}
-.more-item:active,.more-item.cur{background:rgba(0,144,156,.3);color:#fff;}
+
 
 /* ── CARDS ── */
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;}
 .card-dark{background:var(--card-dark);border-radius:var(--radius);border:1px solid rgba(255,255,255,.08);margin-bottom:12px;overflow:hidden;}
-.card-hd{padding:13px 14px 0;display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:700;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.6px;}
-.card-body{padding:12px 14px 14px;}
+.card-hd{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.8px;opacity:.7;}
+.card-body{padding:12px 16px 16px;}
 
 /* ── HERO ── */
 .hero{background:var(--card-dark);border-radius:var(--radius);border:1px solid rgba(0,144,156,.3);margin-bottom:12px;overflow:hidden;margin-top:8px;}
 .hero-bar{height:3px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--teal));background-size:200%;animation:shimmer 3s linear infinite;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.hero-body{padding:16px 14px 18px;}
-.hero-h{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:3px;}
-.hero-sub{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:12px;}
-.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
-.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.1);}
-.badge i{color:var(--teal);font-size:9px;}
-.ticker{display:flex;gap:7px;flex-wrap:wrap;}
-.t-pill{font-size:10.5px;font-weight:700;padding:4px 11px;border-radius:20px;background:rgba(0,144,156,.12);color:var(--teal);border:1px solid rgba(0,144,156,.28);transition:all .3s;}
-.t-pill.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+.hero-body{padding:14px 14px 16px;}
+.hero-h{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:2px;}
+.hero-sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:12px;}
+.badges{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.badges::-webkit-scrollbar{display:none;}
+.badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.1);white-space:nowrap;flex-shrink:0;}
+.badge i{color:var(--teal);font-size:10px;}
+
 
 /* ── NEXT ACTION ── */
 .na-card{background:var(--card-dark);border-radius:var(--radius);border:1px solid rgba(202,147,36,.35);margin-bottom:12px;overflow:hidden;}
@@ -77,30 +72,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 @keyframes uglow{0%,100%{box-shadow:none}50%{box-shadow:0 0 22px rgba(229,62,62,.3)}}
 .na-bar{height:3px;background:linear-gradient(90deg,var(--gold),var(--teal));}
 .na-card.urgent .na-bar{background:linear-gradient(90deg,var(--hot),#f97316);}
-.na-body{padding:14px;}
-.eyebrow{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:7px;}
+.na-body{padding:16px 16px 18px;}
+.eyebrow{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gold);margin-bottom:8px;}
 .pdot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pd 1.5s ease-in-out infinite;}
 .na-card.urgent .pdot{background:var(--hot);}
 .na-card.urgent .eyebrow{color:var(--hot);}
 @keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
-.na-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:9px;line-height:1.3;}
-.na-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
-.na-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);font-size:10.5px;padding:3px 8px;border-radius:20px;}
-.countdown{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:2px;margin-bottom:12px;}
-.countdown s{font-size:10px;font-weight:500;color:rgba(255,255,255,.35);text-decoration:none;margin-right:4px;}
-.na-btn{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#fff;font-size:11.5px;font-weight:700;padding:7px 14px;border-radius:7px;cursor:pointer;border:none;transition:all .15s;}
+.na-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.35;}
+.na-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.na-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);font-size:11px;padding:4px 9px;border-radius:20px;}
+.countdown{display:flex;align-items:flex-end;gap:4px;margin-bottom:14px;}
+.cd-block{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.cd-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff;line-height:1;min-width:44px;text-align:center;}
+.cd-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);}
+.cd-sep{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:6px;line-height:1;}
+.na-btn{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:9px 16px;border-radius:8px;cursor:pointer;border:none;transition:all .15s;}
 .na-btn:hover{background:#a07016;}
 
 /* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px;}
-.sc{background:var(--white);border-radius:12px;padding:12px 10px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:transform .12s;}
+.sc{background:var(--white);border-radius:12px;padding:14px 10px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:transform .12s;}
 .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .sc.a::before{background:var(--teal);}
 .sc.b::before{background:var(--hot);}
 .sc.c::before{background:var(--success);}
 .sc:active{transform:scale(.96);}
-.sc-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--teal-dark);line-height:1;}
-.sc-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-top:3px;}
+.sc-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--teal-dark);line-height:1;}
+.sc-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);margin-top:5px;}
 
 /* ── DAY TABS ── */
 .day-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
@@ -125,14 +123,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tl-dot.green{background:var(--success);box-shadow:0 0 0 2px var(--success);}
 .tl-dot.hot{background:var(--hot);box-shadow:0 0 0 2px var(--hot);}
 .tl-time{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
-.tl-card{background:var(--white);border-radius:10px;padding:11px 13px;box-shadow:0 1px 8px rgba(0,68,82,.07);border:1px solid var(--border);border-left:3px solid var(--teal);}
+.tl-card{background:var(--white);border-radius:12px;padding:13px 14px;box-shadow:0 1px 8px rgba(0,68,82,.06);border:1px solid var(--border);border-left:3px solid var(--teal);}
 .tl-card.gold{border-left-color:var(--gold);}
 .tl-card.purple{border-left-color:var(--purple);}
 .tl-card.green{border-left-color:var(--success);}
 .tl-card.hot{border-left-color:var(--hot);}
 .tl-card.meeting-type{border-left-color:var(--purple);background:linear-gradient(135deg,#fff,#faf7ff);}
 .tl-head{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:5px;}
-.tl-title{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.tl-title{font-size:13.5px;font-weight:700;color:var(--text);flex:1;line-height:1.3;}
 .tl-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
 .tl-badge.ltw{background:#fff3cd;color:#856404;}
 .tl-badge.meeting{background:#ede9fe;color:#5b21b6;}
@@ -141,7 +139,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tl-chip.gold{background:var(--gold-light);color:#7a5a0a;}
 .tl-chip.purple{background:#ede9fe;color:#5b21b6;}
 .tl-chip.hot{background:#fff0f0;color:var(--hot);}
-.tl-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.tl-desc{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:2px;}
 .tl-actions{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
 .tl-btn{display:inline-flex;align-items:center;gap:4px;background:var(--teal-light);color:var(--teal-dark);font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:6px;cursor:pointer;border:none;text-decoration:none;transition:all .14s;}
 .tl-btn:hover{background:var(--teal);color:#fff;}
@@ -178,15 +176,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .fp{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;background:var(--white);border:1.5px solid var(--border);cursor:pointer;color:var(--text-muted);transition:all .14s;}
 .fp.active{background:var(--teal);border-color:var(--teal);color:#fff;}
 .mc{background:var(--white);border-radius:12px;margin-bottom:9px;box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;}
-.mc-top{display:flex;align-items:flex-start;justify-content:space-between;padding:11px 13px 6px;}
-.mc-company{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;color:var(--teal-dark);}
+.mc-top{display:flex;align-items:flex-start;justify-content:space-between;padding:13px 14px 7px;}
+.mc-company{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--teal-dark);}
 .mc-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
 .oc{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
 .oc.hot{background:#fff0f0;color:var(--hot);}
 .oc.warm{background:var(--gold-light);color:#8a6010;}
 .oc.cold{background:#f1f5f9;color:#64748b;}
 .oc.pending{background:var(--teal-light);color:var(--teal-dark);}
-.mc-body{padding:0 13px 11px;}
+.mc-body{padding:0 14px 13px;}
 .mc-person{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
 .mc-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
 .mchip{display:inline-flex;align-items:center;gap:3px;background:var(--bg);color:var(--text-muted);font-size:10.5px;padding:2px 8px;border-radius:20px;}
@@ -278,12 +276,12 @@ textarea{resize:vertical;min-height:62px;}
 
 /* ── QUICK GRID ── */
 .qg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
-.qb{background:var(--white);border-radius:9px;padding:11px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--border);cursor:pointer;transition:all .13s;font-size:9.5px;font-weight:700;color:var(--text-muted);}
-.qb i{font-size:18px;color:var(--teal);}
+.qb{background:var(--white);border-radius:12px;padding:14px 5px;display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--border);cursor:pointer;transition:all .13s;font-size:10px;font-weight:600;color:var(--text-muted);}
+.qb i{font-size:20px;color:var(--teal);}
 .qb:active{transform:scale(.95);background:var(--teal-light);}
 
 /* ── SECTION HEADING ── */
-.sh{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--teal-dark);margin-bottom:12px;padding-top:6px;}
+.sh{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--teal-dark);margin-bottom:14px;padding-top:8px;}
 
 /* ── EMPTY STATE ── */
 .empty{text-align:center;padding:44px 18px;color:var(--text-muted);}
@@ -295,6 +293,13 @@ textarea{resize:vertical;min-height:62px;}
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* ── HERO INFO GRID ── */
+.hero-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px;}
+.hig-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);}
+.hig-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.hig-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.3);margin-bottom:2px;}
+.hig-val{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.88);line-height:1.3;}
 </style>
 </head>
 <body>
@@ -328,18 +333,14 @@ textarea{resize:vertical;min-height:62px;}
       <div class="hero-bar"></div>
       <div class="hero-body">
         <div class="hero-h">London Trip 2026</div>
-        <div class="hero-sub">Vineet Kumar & Dinesh Kumar · Software Escrow Mission</div>
-        <div class="badges">
-          <span class="badge"><i class="fas fa-plane"></i> Depart 6 Jun · Return 20 Jun</span>
-          <span class="badge"><i class="fas fa-building"></i> LTW: 8–10 Jun @ Olympia</span>
-          <span class="badge"><i class="fas fa-handshake"></i> Meetings: 9–19 Jun</span>
-          <span class="badge"><i class="fas fa-users"></i> Ian &amp; Qaiser on ground</span>
-        </div>
-        <div class="ticker" id="ticker">
-          <span class="t-pill on">Software Escrow</span>
-          <span class="t-pill">SaaS Escrow</span>
-          <span class="t-pill">AI Verification</span>
-          <span class="t-pill">SBOM Analysis</span>
+        <div class="hero-sub">Vineet Kumar &amp; Dinesh Kumar · Software Escrow</div>
+        <div class="hero-info-grid">
+          <div class="hig-item"><div class="hig-dot" style="background:var(--teal)"></div><div><div class="hig-label">Departure</div><div class="hig-val">Sat 6 June 2026</div></div></div>
+          <div class="hig-item"><div class="hig-dot" style="background:var(--teal)"></div><div><div class="hig-label">Return</div><div class="hig-val">Sat 20 June 2026</div></div></div>
+          <div class="hig-item"><div class="hig-dot" style="background:var(--gold)"></div><div><div class="hig-label">London Tech Week</div><div class="hig-val">8–10 Jun · Olympia London</div></div></div>
+          <div class="hig-item"><div class="hig-dot" style="background:var(--purple)"></div><div><div class="hig-label">External Meetings</div><div class="hig-val">9–19 Jun · Various</div></div></div>
+          <div class="hig-item"><div class="hig-dot" style="background:var(--success)"></div><div><div class="hig-label">Consultants</div><div class="hig-val">Ian &amp; Qaiser on ground</div></div></div>
+          <div class="hig-item"><div class="hig-dot" style="background:var(--teal)"></div><div><div class="hig-label">Focus Product</div><div class="hig-val">Software &amp; SaaS Escrow</div></div></div>
         </div>
       </div>
     </div>
@@ -367,38 +368,18 @@ textarea{resize:vertical;min-height:62px;}
     <div class="card">
       <div class="card-hd"><span class="card-title">Quick Access</span></div>
       <div class="card-body">
-        <div class="qg">
+        <div class="qg" style="grid-template-columns:repeat(3,1fr)">
           <div class="qb" onclick="showSec('sec-agenda')"><i class="fas fa-calendar-days"></i>Agenda</div>
           <div class="qb" onclick="showSec('sec-ltw')"><i class="fas fa-star"></i>LTW</div>
           <div class="qb" onclick="showSec('sec-meetings')"><i class="fas fa-handshake"></i>Meetings</div>
-          <div class="qb" onclick="showSec('sec-intel')"><i class="fas fa-building"></i>Intel</div>
           <div class="qb" onclick="showSec('sec-resources')"><i class="fas fa-folder-open"></i>Resources</div>
-          <div class="qb" onclick="showSec('sec-team')"><i class="fas fa-users"></i>Team</div>
-          <div class="qb" onclick="window.open('https://londontechweek.com','_blank')"><i class="fas fa-globe"></i>LTW Site</div>
-          <div class="qb" onclick="window.open('https://maps.google.com/?q=Olympia+London','_blank')"><i class="fas fa-map"></i>Venue</div>
+          <div class="qb" onclick="showSec('sec-ltw')"><i class="fas fa-users-viewfinder"></i>Speakers</div>
+          <div class="qb" onclick="showSec('sec-ltw')"><i class="fas fa-calendar-check"></i>Sessions</div>
         </div>
       </div>
     </div>
 
-    <!-- Trip Summary -->
-    <div class="card">
-      <div class="card-hd"><span class="card-title">Trip Overview</span></div>
-      <div class="card-body" style="display:flex;flex-direction:column;gap:7px">
-        <div style="background:var(--bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-size:12px;font-weight:700;color:var(--teal-dark)">✈️ Flight Out</div><div style="font-size:11px;color:var(--text-muted)">6 June 2026</div></div>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-size:12px;font-weight:700;color:var(--gold)">🎪 London Tech Week</div><div style="font-size:11px;color:var(--text-muted)">8–10 June · Olympia London</div></div>
-          <a href="https://maps.google.com/?q=Olympia+London" target="_blank" style="font-size:10px;font-weight:700;color:var(--teal);text-decoration:none">Maps →</a>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px 12px;">
-          <div style="font-size:12px;font-weight:700;color:var(--purple)">🤝 External Meetings</div><div style="font-size:11px;color:var(--text-muted)">9–19 June · Various London locations</div>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px 12px;">
-          <div style="font-size:12px;font-weight:700;color:var(--teal-dark)">✈️ Flight Back</div><div style="font-size:11px;color:var(--text-muted)">20 June 2026</div>
-        </div>
-      </div>
-    </div>
+
   </div>
 
   <!-- ════════ AGENDA (Day-wise synced) ════════ -->
@@ -490,18 +471,7 @@ textarea{resize:vertical;min-height:62px;}
     <div class="empty" id="mempty" style="display:none"><div class="ei">🤝</div><h3>No meetings yet</h3><p>Tap + to log your first meeting</p></div>
   </div>
 
-  <!-- ════════ INTEL ════════ -->
-  <div class="sec pad" id="sec-intel">
-    <div class="sh">Company Intel</div>
-    <div class="sbar"><i class="fas fa-search" style="color:var(--text-muted)"></i><input type="text" id="isearch" placeholder="Search companies..." oninput="renderIntel()"></div>
-    <div class="fpills">
-      <div class="fp active" onclick="setIF('all',this)">All</div>
-      <div class="fp" onclick="setIF('high',this)">High Priority</div>
-      <div class="fp" onclick="setIF('medium',this)">Medium</div>
-      <div class="fp" onclick="setIF('low',this)">Low</div>
-    </div>
-    <div id="ilist"></div>
-  </div>
+
 
   <!-- ════════ RESOURCES ════════ -->
   <div class="sec pad" id="sec-resources">
@@ -548,49 +518,7 @@ textarea{resize:vertical;min-height:62px;}
     </div>
   </div>
 
-  <!-- ════════ TEAM ════════ -->
-  <div class="sec pad" id="sec-team">
-    <div class="sh">The Team</div>
-    <div class="team-grid">
-      <div class="tc">
-        <div class="tc-av" style="background:var(--teal)">VK</div>
-        <div class="tc-name">Vineet Kumar</div>
-        <div class="tc-role">Founder & CEO</div>
-        <div class="tc-detail" id="td-v"><div class="tdr"><span>Focus</span><span>BD & Investors</span></div><div class="tdr"><span>Based</span><span>India</span></div></div>
-        <button class="btn-sm" style="margin-top:7px" onclick="tdToggle('td-v')">Details ▾</button>
-      </div>
-      <div class="tc">
-        <div class="tc-av" style="background:var(--gold)">DK</div>
-        <div class="tc-name">Dinesh Kumar</div>
-        <div class="tc-role">Co-Founder</div>
-        <div class="tc-detail" id="td-d"><div class="tdr"><span>Focus</span><span>Product & Tech</span></div><div class="tdr"><span>Based</span><span>India</span></div></div>
-        <button class="btn-sm" style="margin-top:7px;background:var(--gold-light);color:#7a5a0a" onclick="tdToggle('td-d')">Details ▾</button>
-      </div>
-      <div class="tc">
-        <div class="tc-av" style="background:var(--purple)">IAN</div>
-        <div class="tc-name">Ian</div>
-        <div class="tc-role">Consultant (UK)</div>
-        <div class="tc-detail" id="td-i"><div class="tdr"><span>Focus</span><span>UK Market BD</span></div><div class="tdr"><span>Based</span><span>London</span></div></div>
-        <button class="btn-sm" style="margin-top:7px;background:#ede9fe;color:#5b21b6" onclick="tdToggle('td-i')">Details ▾</button>
-      </div>
-      <div class="tc">
-        <div class="tc-av" style="background:#0891b2">QN</div>
-        <div class="tc-name">Qaiser Noor</div>
-        <div class="tc-role">Consultant</div>
-        <div class="tc-detail" id="td-q"><div class="tdr"><span>Focus</span><span>Meeting Setup</span></div></div>
-        <button class="btn-sm" style="margin-top:7px;background:#e0f7fa;color:#0e7490" onclick="tdToggle('td-q')">Details ▾</button>
-      </div>
-    </div>
-    <div class="rules-card">
-      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--teal-dark);margin-bottom:9px">🎯 Rules of Engagement</div>
-      <div class="rule">Every meeting logged in Meetings tab same day</div>
-      <div class="rule">Tag type: Customer / Investor / Competitor / Partner</div>
-      <div class="rule">Hot leads flagged to Ian & Qaiser within 24 hours</div>
-      <div class="rule">All locations confirmed 1 day before meeting</div>
-      <div class="rule">Follow-up notes added before end of each day</div>
-      <div class="rule">Use Resources section to open demo during meetings</div>
-    </div>
-  </div>
+
 
 </div><!-- end page -->
 
@@ -600,19 +528,14 @@ textarea{resize:vertical;min-height:62px;}
   <div class="nav-btn" id="nb-agenda" onclick="showSec('sec-agenda')"><i class="fas fa-calendar-days"></i>Agenda</div>
   <div class="nav-btn" id="nb-ltw" onclick="showSec('sec-ltw')"><i class="fas fa-star"></i>LTW</div>
   <div class="nav-btn" id="nb-meetings" onclick="showSec('sec-meetings')"><i class="fas fa-handshake"></i>Meetings</div>
-  <div class="nav-btn" id="nb-more" onclick="toggleMore()"><i class="fas fa-grid-2"></i>More</div>
+  <div class="nav-btn" id="nb-resources" onclick="showSec('sec-resources')"><i class="fas fa-folder-open"></i>Resources</div>
 </div>
 
-<!-- MORE PANEL -->
-<div class="more-panel" id="more-panel">
-  <div class="more-item" onclick="showSec('sec-intel');toggleMore()"><i class="fas fa-building"></i>Intel</div>
-  <div class="more-item" onclick="showSec('sec-resources');toggleMore()"><i class="fas fa-folder-open"></i>Resources</div>
-  <div class="more-item" onclick="showSec('sec-team');toggleMore()"><i class="fas fa-users"></i>Team</div>
-</div>
+
 
 <!-- FABs -->
 <button class="fab" id="fab-m" onclick="openMM()"><i class="fas fa-plus"></i></button>
-<button class="fab" id="fab-i" onclick="openIM()"><i class="fas fa-plus"></i></button>
+
 
 <!-- ════════ MEETING MODAL ════════ -->
 <div class="modal-ov" id="mm-ov" onclick="handleOv(event,'mm-ov')">
@@ -646,27 +569,7 @@ textarea{resize:vertical;min-height:62px;}
   </div>
 </div>
 
-<!-- ════════ INTEL MODAL ════════ -->
-<div class="modal-ov" id="im-ov" onclick="handleOv(event,'im-ov')">
-  <div class="modal">
-    <div class="mhd"><div class="mtitle" id="im-title">Add Company</div><button class="mclose" onclick="closeIM()">✕</button></div>
-    <div class="mbody">
-      <div class="frow">
-        <div class="fg"><label>Company Name *</label><input type="text" id="i-name" placeholder="Company name"></div>
-        <div class="fg"><label>Sector</label><input type="text" id="i-sector" placeholder="e.g. BFSI"></div>
-      </div>
-      <div class="fg"><label>Priority</label><select id="i-pri"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>
-      <div class="fg"><label>Overview</label><textarea id="i-ov" placeholder="What do they do?"></textarea></div>
-      <div class="fg"><label>Relevance to Castler</label><textarea id="i-rel" placeholder="Why relevant for Software Escrow?"></textarea></div>
-      <div class="fg"><label>Pitch Angle</label><textarea id="i-pitch" placeholder="How should we approach them?"></textarea></div>
-      <div class="fg"><label>Talking Points (one per line)</label><textarea id="i-talk" placeholder="Point 1&#10;Point 2"></textarea></div>
-      <div class="frow">
-        <div class="fg"><label>Key Contact</label><input type="text" id="i-contact" placeholder="Name"></div>
-        <div class="fg"><label>Booth / Stand</label><input type="text" id="i-booth" placeholder="e.g. Stand 431"></div>
-      </div>
-    </div>
-    <div class="mfoot"><button class="btn-s" onclick="closeIM()">Cancel</button><button class="btn-p" onclick="saveIntel()"><i class="fas fa-save"></i> Save</button></div>
-  </div>
+
 </div>
 
 <script>
@@ -676,26 +579,32 @@ textarea{resize:vertical;min-height:62px;}
 const SB='https://czsmqwpdxasvkynoeafs.supabase.co';
 const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6c21xd3BkeGFzdmt5bm9lYWZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MzM3MjQsImV4cCI6MjA5MzIwOTcyNH0.6f6V_e1E_pJH0DLgljbXs-koIwro-DJ3SvTuSvMHZRc';
 
-async function sbGet(k){try{const r=await fetch(SB+'/rest/v1/dashboard_data?key=eq.'+k+'&select=value',{headers:{'apikey':SK,'Authorization':'Bearer '+SK}});if(!r.ok)return null;const d=await r.json();return d.length?JSON.parse(d[0].value):null;}catch{return null;}}
+async function sbGet(k){try{
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),4000);
+  const r=await fetch(SB+'/rest/v1/dashboard_data?key=eq.'+k+'&select=value',{headers:{'apikey':SK,'Authorization':'Bearer '+SK},signal:ctrl.signal});
+  clearTimeout(t);
+  if(!r.ok)return null;const d=await r.json();return d.length?JSON.parse(d[0].value):null;
+}catch{return null;}}
 async function sbSet(k,v){try{const r=await fetch(SB+'/rest/v1/dashboard_data',{method:'POST',headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({key:k,value:JSON.stringify(v)})});return r.ok;}catch{return false;}}
 
 // ══════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════
-let meetings=[], intel=[], resources=[];
+let meetings=[], resources=[];
 let mEditId=null, iEditId=null;
-let mFilter='all', iFilter='all';
+let mFilter='all';
 let saveTimer=null;
 
 async function loadAll(){
   let ok=false;
-  const defs={ltw2_meetings:[],ltw2_intel:defaultIntel(),ltw2_resources:defaultResources()};
+  const defs={ltw2_meetings:[],ltw2_resources:defaultResources()};
   for(const k of Object.keys(defs)){
     const c=await sbGet(k);let v;
     if(c!==null){ok=true;v=c;localStorage.setItem(k,JSON.stringify(v));}
     else{const l=localStorage.getItem(k);v=l?JSON.parse(l):defs[k];}
     if(k==='ltw2_meetings')meetings=v;
-    if(k==='ltw2_intel')intel=v;
+
     if(k==='ltw2_resources')resources=v;
   }
   const el=document.getElementById('sync');
@@ -705,11 +614,11 @@ async function loadAll(){
 function dSave(){if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(saveAll,800);}
 async function saveAll(){
   const el=document.getElementById('sync');el.textContent='⟳';el.className='sync-dot';
-  ['ltw2_meetings','ltw2_intel','ltw2_resources'].forEach(k=>{
-    const v=k==='ltw2_meetings'?meetings:k==='ltw2_intel'?intel:resources;
+  ['ltw2_meetings','ltw2_resources'].forEach(k=>{
+    const v=k==='ltw2_meetings'?meetings:resources;
     localStorage.setItem(k,JSON.stringify(v));
   });
-  const r=await Promise.all([sbSet('ltw2_meetings',meetings),sbSet('ltw2_intel',intel),sbSet('ltw2_resources',resources)]);
+  const r=await Promise.all([sbSet('ltw2_meetings',meetings),sbSet('ltw2_resources',resources)]);
   const ok=r.some(x=>x);
   el.textContent=ok?'✓ Synced':'Local';el.className='sync-dot'+(ok?' ok':'');
   setTimeout(()=>{el.textContent='';el.className='sync-dot';},2500);
@@ -719,44 +628,26 @@ async function saveAll(){
 // ══════════════════════════════════════════
 // DEFAULT DATA
 // ══════════════════════════════════════════
-function defaultIntel(){return[
-  {id:1,name:'Barclays',sector:'BFSI',priority:'high',overview:'Major UK bank with significant technology procurement under FCA regulatory framework.',relevance:'Large financial institution requiring software continuity escrow for critical vendor management under FCA/PRA.',pitch:'FCA/PRA mandates software escrow for critical third-party tech. We handle compliance + AI-led verification.',talking:['FCA operational resilience requirements','Third-party risk management under PRA','ISO 27001 + SOC 2 certified','DORA alignment'],contact:'',booth:''},
-  {id:2,name:'HSBC',sector:'BFSI',priority:'high',overview:'Global banking — massive technology footprint across 60+ markets.',relevance:'Critical need for software escrow across global vendor relationships. DORA + FCA compliance driver.',pitch:'Global ops = global vendor risk. Our multi-cloud escrow with BYOK encryption is built for your scale.',talking:['Multi-cloud AWS/GCP/Azure storage','BYOK encryption — your keys','SBOM & dependency analysis','Regulatory alignment across 50+ jurisdictions'],contact:'',booth:''},
-  {id:3,name:'Lloyds Banking Group',sector:'BFSI',priority:'high',overview:'UK retail and commercial bank — strong regulatory compliance focus.',relevance:'Kirsty Montignani (Head of Security, AI & Data at Lloyds) is speaking at LTW — direct connection.',pitch:'Lloyds vendor management teams need continuous escrow with real-time updates — that\'s exactly what we built.',talking:['Real-time version control','Automated release triggers','Immutable audit trails','FCA operational resilience'],contact:'Kirsty Montignani',booth:'Speaker'},
-  {id:4,name:'Thought Machine',sector:'Core Banking Tech',priority:'high',overview:'Cloud-native core banking platform — sells to tier 1 banks globally.',relevance:'Perfect channel partner — their bank clients need software escrow for the Vault platform itself.',pitch:'Every bank running Vault needs source code escrow. We can be the default escrow for all Thought Machine deployments.',talking:['Partner programme opportunity','White-label escrow for Vault clients','FCA/PRA compliance packaging'],contact:'',booth:''},
-  {id:5,name:'Finastra',sector:'Fintech / Banking Software',priority:'high',overview:'One of the world\'s largest fintech companies — banking software for 8,000+ institutions.',relevance:'Huge channel opportunity — Finastra\'s clients need software escrow for Finastra products.',pitch:'You have 8,000 bank clients. Each one needs source code escrow for your software. Let\'s build that together.',talking:['Embedded escrow for their product suite','Revenue share model','Global regulatory coverage'],contact:'',booth:''},
-  {id:6,name:'Revolut',sector:'Fintech',priority:'medium',overview:'Neobank — fast-growing, heavy tech stack, aggressive international expansion.',relevance:'SaaS escrow for their own platform + potential customer use case as they grow enterprise.',pitch:'As you onboard enterprise clients, software continuity assurance is a key differentiator. We power that.',talking:['SaaS escrow for enterprise clients','Source code continuity','AI-led verification'],contact:'',booth:''},
-  {id:7,name:'Snap Compliance',sector:'RegTech / GRC',priority:'high',overview:'AI-powered GRC platform for streamlining information security compliance.',relevance:'Gabriela Herra (Co-Founder & CTO) is speaking at LTW. Strong compliance overlap — potential partnership.',pitch:'Your GRC platform + our software escrow = complete vendor risk management solution for regulated enterprises.',talking:['Partnership opportunity — GRC + Escrow','Shared regulated industry clients','DORA/NIS2 compliance stack'],contact:'Gabriela Herra (Co-Founder & CTO)',booth:'Essential Costa Rica Pavilion'},
-  {id:8,name:'Scrut Automation',sector:'GRC / Compliance',priority:'medium',overview:'AI-powered GRC platform for streamlining information security compliance and risk management.',relevance:'Potential partner — their compliance automation + our escrow creates a full third-party risk solution.',pitch:'Together we cover the full vendor risk lifecycle: compliance monitoring (you) + source code continuity (us).',talking:['Integration partnership','Shared BFSI client base','DORA compliance bundling'],contact:'',booth:'Stand 431'},
-  {id:9,name:'Deloitte',sector:'Consulting',priority:'medium',overview:'Global consulting firm with major financial services practice.',relevance:'System integrator / channel partner for enterprise escrow implementations in BFSI.',pitch:'Your financial services clients need software escrow for critical third-party systems. We are the right partner.',talking:['Reseller / referral programme','Enterprise deals via consulting engagements','FCA/PRA advisory work'],contact:'',booth:'Stand 170'},
-];};
-
-function defaultResources(){return[
-  {id:1,name:'Castler Website',cat:'link',url:'https://castler.com',desc:'Main product website'},
-  {id:2,name:'Software Escrow Overview',cat:'link',url:'https://castler.com/software-escrow',desc:'Software Escrow product page'},
-  {id:3,name:'ISO 27001 & SOC 2 Certifications',cat:'doc',url:'',desc:'Add certification document URL'},
-];}
-
 // ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
-const NAV_MAP={'sec-home':'nb-home','sec-agenda':'nb-agenda','sec-ltw':'nb-ltw','sec-meetings':'nb-meetings','sec-intel':'nb-more','sec-resources':'nb-more','sec-team':'nb-more'};
+const NAV_MAP={'sec-home':'nb-home','sec-agenda':'nb-agenda','sec-ltw':'nb-ltw','sec-meetings':'nb-meetings','sec-resources':'nb-resources'};
 function showSec(id){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const nb=NAV_MAP[id];if(nb)document.getElementById(nb).classList.add('active');
   document.getElementById('fab-m').classList.toggle('show',id==='sec-meetings');
-  document.getElementById('fab-i').classList.toggle('show',id==='sec-intel');
-  document.getElementById('more-panel').classList.remove('open');
+
+
   window.scrollTo(0,0);
   if(id==='sec-agenda')initAgenda();
   if(id==='sec-meetings')renderMeetings();
-  if(id==='sec-intel')renderIntel();
+
   if(id==='sec-resources')renderResources();
   if(id==='sec-ltw'){ltwTab('overview',document.getElementById('ltw-tab-overview'));}
 }
-function toggleMore(){document.getElementById('more-panel').classList.toggle('open');}
+
 
 // ══════════════════════════════════════════
 // AGENDA — sessions + synced meetings
@@ -1038,57 +929,7 @@ function saveMeeting(){
 // ══════════════════════════════════════════
 // INTEL
 // ══════════════════════════════════════════
-const ICOLS=['#00909c','#004452','#ca9324','#8b5cf6','#e11d48','#059669','#0284c7','#0891b2'];
-function icol(n){let h=0;for(const c of n)h=c.charCodeAt(0)+((h<<5)-h);return ICOLS[Math.abs(h)%ICOLS.length];}
-function setIF(f,el){iFilter=f;document.querySelectorAll('#sec-intel .fp').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderIntel();}
 
-function renderIntel(){
-  const q=(document.getElementById('isearch')?.value||'').toLowerCase();
-  const fil=intel.filter(c=>{
-    const mq=!q||(c.name||'').toLowerCase().includes(q)||(c.sector||'').toLowerCase().includes(q);
-    return mq&&(iFilter==='all'||c.priority===iFilter);
-  });
-  const hasMtg=meetings.map(m=>(m.company||'').toLowerCase());
-  document.getElementById('ilist').innerHTML=fil.length?fil.map(c=>{
-    const ri=intel.indexOf(c);
-    const hm=hasMtg.includes((c.name||'').toLowerCase());
-    const tps=(c.talking||[]).map(t=>`<div class="tp">${t}</div>`).join('');
-    return`<div class="ic">
-      <div class="ic-hd">
-        <div class="ic-av" style="background:${icol(c.name)}">${(c.name||'?')[0].toUpperCase()}</div>
-        <div style="flex:1"><div class="ic-name">${c.name}</div><div class="ic-sector">${c.sector||'—'}</div></div>
-        ${hm?'<span class="mtg-badge"><i class="fas fa-check"></i> Meeting</span>':''}
-        <span class="pb ${c.priority||'medium'}">${(c.priority||'medium').toUpperCase()}</span>
-      </div>
-      ${c.overview?`<div class="ic-sec"><div class="ic-sec-lbl">Overview</div><div class="ic-sec-txt">${c.overview}</div></div>`:''}
-      ${c.relevance?`<div class="ic-sec"><div class="ic-sec-lbl">Relevance</div><div class="ic-sec-txt">${c.relevance}</div></div>`:''}
-      ${c.pitch?`<div class="ic-sec"><div class="ic-sec-lbl">Pitch Angle</div><div class="ic-sec-txt">${c.pitch}</div></div>`:''}
-      ${tps?`<div class="ic-sec"><div class="ic-sec-lbl">Talking Points</div><div class="tp-list">${tps}</div></div>`:''}
-      ${c.contact||c.booth?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px">${c.contact?`<span class="mchip"><i class="fas fa-user"></i> ${c.contact}</span>`:''}${c.booth?`<span class="mchip"><i class="fas fa-map-marker-alt"></i> ${c.booth}</span>`:''}</div>`:''}
-      <div style="display:flex;gap:5px;margin-top:9px">
-        <button class="ib" onclick="openIM(${ri})" style="width:auto;padding:0 9px;font-size:11px;font-weight:700">✏️ Edit</button>
-        <button class="ib del" onclick="delIntel(${ri})">🗑️</button>
-      </div>
-    </div>`;
-  }).join(''):'<div class="empty"><div class="ei">🏢</div><h3>No companies</h3></div>';
-}
-
-function openIM(id=null){
-  iEditId=id;document.getElementById('im-title').textContent=id!==null?'Edit Company':'Add Company';
-  ['i-name','i-sector','i-ov','i-rel','i-pitch','i-talk','i-contact','i-booth'].forEach(f=>document.getElementById(f).value='');
-  document.getElementById('i-pri').value='medium';
-  if(id!==null){const c=intel[id];document.getElementById('i-name').value=c.name||'';document.getElementById('i-sector').value=c.sector||'';document.getElementById('i-pri').value=c.priority||'medium';document.getElementById('i-ov').value=c.overview||'';document.getElementById('i-rel').value=c.relevance||'';document.getElementById('i-pitch').value=c.pitch||'';document.getElementById('i-talk').value=(c.talking||[]).join('\n');document.getElementById('i-contact').value=c.contact||'';document.getElementById('i-booth').value=c.booth||'';}
-  document.getElementById('im-ov').classList.add('open');
-}
-function closeIM(){document.getElementById('im-ov').classList.remove('open');}
-function delIntel(i){if(confirm('Remove company?')){intel.splice(i,1);dSave();renderIntel();}}
-function saveIntel(){
-  const name=document.getElementById('i-name').value.trim();if(!name){document.getElementById('i-name').focus();return;}
-  const raw=document.getElementById('i-talk').value.trim();
-  const c={name,sector:document.getElementById('i-sector').value.trim(),priority:document.getElementById('i-pri').value,overview:document.getElementById('i-ov').value.trim(),relevance:document.getElementById('i-rel').value.trim(),pitch:document.getElementById('i-pitch').value.trim(),talking:raw?raw.split('\n').map(t=>t.trim().replace(/^[•\-→]\s*/,'')).filter(Boolean):[],contact:document.getElementById('i-contact').value.trim(),booth:document.getElementById('i-booth').value.trim(),id:iEditId!==null?intel[iEditId].id:Date.now()};
-  if(iEditId!==null)intel[iEditId]=c;else intel.push(c);
-  dSave();renderIntel();closeIM();
-}
 
 // ══════════════════════════════════════════
 // RESOURCES
@@ -1128,7 +969,7 @@ function updateStats(){
   document.getElementById('st-h').textContent=meetings.filter(m=>m.outcome==='hot').length;
 }
 
-function tdToggle(id){document.getElementById(id).classList.toggle('open');}
+
 function handleOv(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
 
 // ══════════════════════════════════════════
@@ -1153,7 +994,13 @@ function tickNA(){
   document.getElementById('na-ey').textContent=next.ey;
   document.getElementById('na-t').textContent=next.title;
   document.getElementById('na-chips').innerHTML=next.meta.map(m=>`<span class="na-chip">${m}</span>`).join('');
-  document.getElementById('na-cd').innerHTML=days>0?`<s>days</s>${days} <s>hrs</s>${String(hrs).padStart(2,'0')}:<s>min</s>${String(mins).padStart(2,'0')}:<s>sec</s>${String(secs).padStart(2,'0')}`:`<s>hrs</s>${String(hrs).padStart(2,'0')}:<s>min</s>${String(mins).padStart(2,'0')}:<s>sec</s>${String(secs).padStart(2,'0')}`;
+  const daysHtml = days > 0 ? `<div class="cd-block"><div class="cd-num">${days}</div><div class="cd-lbl">days</div></div><div class="cd-sep">:</div>` : '';
+  document.getElementById('na-cd').innerHTML = daysHtml +
+    `<div class="cd-block"><div class="cd-num">${String(hrs).padStart(2,'0')}</div><div class="cd-lbl">hrs</div></div>` +
+    `<div class="cd-sep">:</div>` +
+    `<div class="cd-block"><div class="cd-num">${String(mins).padStart(2,'0')}</div><div class="cd-lbl">min</div></div>` +
+    `<div class="cd-sep">:</div>` +
+    `<div class="cd-block"><div class="cd-num">${String(secs).padStart(2,'0')}</div><div class="cd-lbl">sec</div></div>`;
   document.getElementById('na-btn').onclick=()=>showSec(next.sec);
   card.classList.toggle('urgent',diff<30*60000);
 }
@@ -1161,17 +1008,26 @@ function tickNA(){
 // ══════════════════════════════════════════
 // TICKER
 // ══════════════════════════════════════════
-let ti=0;
-function runTicker(){const p=document.querySelectorAll('.t-pill');p.forEach(x=>x.classList.remove('on'));p[ti].classList.add('on');ti=(ti+1)%p.length;}
+
 
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+function dismissLoader(){
+  const lo=document.getElementById('lo');
+  if(lo&&!lo.classList.contains('gone')){
+    lo.classList.add('gone');
+    setTimeout(()=>{if(lo.parentNode)lo.parentNode.removeChild(lo);},500);
+  }
+}
+
+// Always dismiss after 3s max — regardless of Supabase
+setTimeout(dismissLoader, 3000);
+
 loadAll().then(()=>{
-  updateStats();renderMeetings();renderIntel();renderResources();initAgenda();
-  tickNA();setInterval(tickNA,1000);setInterval(runTicker,3000);
-  document.getElementById('lo').classList.add('gone');
-  setTimeout(()=>document.getElementById('lo').remove(),500);
+  updateStats();renderMeetings();renderResources();initAgenda();
+  tickNA();setInterval(tickNA,1000);
+  dismissLoader();
 });
 </script>
 </body>
