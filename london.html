@@ -373,6 +373,47 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 .ql-sub { font-size: 11px; color: var(--muted); }
 .ql-arrow { margin-left: auto; color: var(--teal); font-size: 12px; }
 
+
+/* ── MEETING HIGHLIGHT IN AGENDA ── */
+.tl-card.meeting-type {
+  border-left: 3px solid var(--purple);
+  background: linear-gradient(135deg, #fafaff 0%, #f3f0ff 100%);
+  box-shadow: 0 2px 12px rgba(124,58,237,.1);
+}
+.tl-card.meeting-type .tl-title { color: var(--purple); }
+.tl-mtg-person { display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--purple);margin-bottom:4px; }
+.tl-mtg-person i { font-size:10px; }
+
+/* ── DETAIL MODAL ── */
+.detail-modal-ov { position:fixed;inset:0;background:rgba(0,52,64,.5);backdrop-filter:blur(5px);z-index:300;display:none;align-items:flex-end; }
+.detail-modal-ov.open { display:flex; }
+.detail-modal { background:var(--white);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;animation:mslide .22s ease; }
+.dm-hd { padding:16px 18px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:5; }
+.dm-hd-icon { width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-right:10px;flex-shrink:0; }
+.dm-title { font-size:15px;font-weight:800;color:var(--teal-dark);flex:1; }
+.dm-close { width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted); }
+.dm-body { padding:16px 18px 24px;display:flex;flex-direction:column;gap:12px; }
+.dm-section { }
+.dm-sec-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px; }
+.dm-row { display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border); }
+.dm-row:last-child { border-bottom:none; }
+.dm-row-label { font-size:12px;font-weight:600;color:var(--text);min-width:90px;flex-shrink:0; }
+.dm-row-val { font-size:12px;color:var(--muted);text-align:right;flex:1; }
+.dm-row-val a { color:var(--teal);text-decoration:none;font-weight:600; }
+.dm-status-bar { display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:9px;padding:10px 12px; }
+.dm-status-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.dm-status-text { font-size:12.5px;font-weight:600;color:var(--text); }
+.dm-btn-row { display:flex;gap:8px;flex-wrap:wrap; }
+.dm-btn { display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:all .13s; }
+.dm-btn.primary { background:var(--teal);color:#fff; }
+.dm-btn.secondary { background:var(--bg);color:var(--teal-dark);border:1.5px solid var(--border); }
+.dm-btn.gold { background:var(--gold);color:#fff; }
+.train-card { background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:6px; }
+.train-route { display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.train-route i { color:var(--teal); }
+.train-times { display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted); }
+.train-or { font-size:10px;font-weight:700;color:var(--muted);text-align:center;padding:4px 0; }
+
 /* scrollbar */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -961,38 +1002,189 @@ function initAgenda(){
 function setAgDay(d,el){agendaDay=d;document.querySelectorAll('#day-tabs-agenda .pill').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAgenda();}
 function filterAgenda(p,el){agendaPerson=p;document.querySelectorAll('#sec-agenda .pill-row:nth-child(4) .pill').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderAgenda();}
 
+// Convert time string to sortable number
+function timeToNum(t){
+  if(!t||t==='All Day')return -1;
+  if(t==='Morning')return 800;
+  if(t==='Afternoon')return 1300;
+  if(t==='Evening')return 1800;
+  if(t==='Alternative')return 0;
+  const m=t.match(/^(\d{1,2}):(\d{2})/);
+  if(m)return parseInt(m[1])*100+parseInt(m[2]);
+  const m2=t.match(/^(\d{1,2})\.(\d{2})/);
+  if(m2)return parseInt(m2[1])*100+parseInt(m2[2]);
+  return 9999;
+}
+
 function renderAgenda(){
   const fixed=FIXED_AGENDA[agendaDay]||[];
   const dayMtgs=meetings.filter(m=>m.date===agendaDay);
-  const all=[
+  let all=[
     ...fixed.map(f=>({...f,isMeeting:false})),
     ...dayMtgs.map(m=>({
-      time:m.time||'TBD',title:`Meeting: ${m.company||'Unknown'}`,
+      time:m.time||'TBD',
+      title:m.company||'Unknown',
+      fullMtgData:m,
       desc:`${m.person||''}${m.desig?' ('+m.desig+')':''}${m.objective?' — '+m.objective:''}`,
       person:'both',type:'meeting',location:m.location,outcome:m.outcome,isMeeting:true,
       mapUrl:m.location?'https://maps.google.com/?q='+encodeURIComponent(m.location):'',
     }))
   ];
+  // Sort by time
+  all.sort((a,b)=>timeToNum(a.time)-timeToNum(b.time));
   const fil=agendaPerson==='all'?all:all.filter(i=>i.person===agendaPerson||i.person==='both');
   const el=document.getElementById('agenda-tl');
   if(!fil.length){el.innerHTML='<div class="empty"><div class="e-ico">📅</div><h3>Nothing for this day</h3></div>';return;}
-  el.innerHTML='<div class="timeline">'+fil.map(item=>{
-    const dot=item.type==='meeting'?'purple':item.type==='hot'?'hot':item.type==='gold'?'gold':item.type==='purple'?'purple':'teal';
-    const card=item.type==='meeting'?'meeting-type':item.type==='hot'?'hot':item.type==='gold'?'gold':item.type==='purple'?'purple':'';
-    const badge=item.badge?`<span class="tl-badge ltw">${item.badge}</span>`:item.isMeeting?`<span class="tl-badge mtg">${{hot:'Hot',warm:'Warm',cold:'Cold',pending:'Pending'}[item.outcome||'pending']}</span>`:'';
+  el.innerHTML='<div class="timeline">'+fil.map((item,idx)=>{
+    const dot=item.isMeeting?'purple':item.type==='hot'?'hot':item.type==='gold'?'gold':item.type==='purple'?'purple':'teal';
+    const card=item.isMeeting?'meeting-type':item.type==='hot'?'hot':item.type==='gold'?'gold':item.type==='purple'?'purple':'';
+    const ocMap={hot:'🔥 Hot',warm:'Warm',cold:'Cold',pending:'Pending'};
+    const badge=item.badge
+      ?`<span class="tl-badge ${item.type==='hot'?'mtg':'ltw'}">${item.badge}</span>`
+      :item.isMeeting?`<span class="tl-badge mtg">${ocMap[item.outcome||'pending']}</span>`:'';
     const mapBtn=item.mapUrl?`<a href="${item.mapUrl}" target="_blank" class="tl-map-btn"><i class="fas fa-map-marker-alt"></i> Directions</a>`:'';
+
+    // Meeting card — special highlighted layout
+    if(item.isMeeting){
+      const m=item.fullMtgData;
+      const TC={customer:'var(--teal)',investor:'var(--purple)',competitor:'var(--red)',partner:'var(--green)',other:'var(--muted)'};
+      return`<div class="tl-item" onclick="openDetailModal('meeting',${JSON.stringify(JSON.stringify(m)).slice(1,-1)})">
+        <div class="tl-dot purple"></div>
+        <div class="tl-time">${item.time}</div>
+        <div class="tl-card meeting-type" style="cursor:pointer;position:relative">
+          <div style="position:absolute;top:8px;right:8px;font-size:10px;color:rgba(124,58,237,.4)"><i class="fas fa-chevron-right"></i></div>
+          <div class="tl-row">
+            <div>
+              <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--purple);margin-bottom:3px">Meeting · ${m.type||'General'}</div>
+              <div class="tl-title" style="color:var(--purple)">${m.company||'Unknown'}</div>
+            </div>
+            ${badge}
+          </div>
+          <div class="tl-mtg-person"><i class="fas fa-user"></i> ${m.person||'—'}${m.desig?' · '+m.desig:''}</div>
+          ${m.location?`<div class="tl-tags"><span class="tl-tag" style="background:#ede9fe;color:var(--purple)"><i class="fas fa-map-marker-alt"></i> ${m.location}</span></div>`:''}
+          ${m.objective?`<div class="tl-desc" style="color:var(--purple);opacity:.75">${m.objective}</div>`:''}
+          <div class="tl-actions">${mapBtn}<span style="font-size:10px;color:var(--purple);font-weight:600;opacity:.6">Tap for details →</span></div>
+        </div>
+      </div>`;
+    }
+
+    // Birmingham — clickable for detail
+    const isBham = item.title && (item.title.includes('Birmingham') || item.title.includes('Woodcock'));
+    const clickAttr = isBham ? `onclick="openDetailModal('birmingham','')"` : '';
+    const tapHint = isBham ? `<span style="font-size:10px;color:var(--gold);font-weight:600;opacity:.7">Tap for full details →</span>` : '';
+
     return`<div class="tl-item">
       <div class="tl-dot ${dot}"></div>
       <div class="tl-time">${item.time}</div>
-      <div class="tl-card ${card}">
+      <div class="tl-card ${card}" ${clickAttr} ${isBham?'style="cursor:pointer"':''}>
         <div class="tl-row"><div class="tl-title">${item.title}</div>${badge}</div>
         ${item.location?`<div class="tl-tags"><span class="tl-tag"><i class="fas fa-map-marker-alt"></i> ${item.location}</span></div>`:''}
         <div class="tl-desc">${item.desc}</div>
-        ${mapBtn?`<div class="tl-actions">${mapBtn}</div>`:''}
+        ${(mapBtn||tapHint)?`<div class="tl-actions">${mapBtn}${tapHint}</div>`:''}
       </div>
     </div>`;
   }).join('')+'</div>';
 }
+
+// ── DETAIL MODAL ──
+function openDetailModal(type, dataStr){
+  const ov=document.getElementById('detail-modal-ov');
+  const body=document.getElementById('dm-body');
+  const icon=document.getElementById('dm-icon');
+  const title=document.getElementById('dm-title');
+
+  if(type==='birmingham'){
+    icon.style.background='#fff3cd';icon.innerHTML='🏙️';
+    title.textContent='LTW Birmingham Regional Visit';
+    body.innerHTML=`
+      <div class="dm-section">
+        <div class="dm-status-bar">
+          <div class="dm-status-dot" style="background:var(--green)"></div>
+          <div class="dm-status-text">✓ Registered — 12 June 2026</div>
+        </div>
+      </div>
+      <div class="dm-section">
+        <div class="dm-sec-label">Event Details</div>
+        <div class="dm-row"><div class="dm-row-label">Event</div><div class="dm-row-val">LTW West Midlands Regional Visit</div></div>
+        <div class="dm-row"><div class="dm-row-label">Date</div><div class="dm-row-val">Friday 12 June 2026</div></div>
+        <div class="dm-row"><div class="dm-row-label">Start Time</div><div class="dm-row-val">9:45 AM</div></div>
+        <div class="dm-row"><div class="dm-row-label">Venue</div><div class="dm-row-val">Woodcock Street, Birmingham B4 7ET</div></div>
+        <div class="dm-row"><div class="dm-row-label">Organiser</div><div class="dm-row-val">WM Growth Hub · London Tech Week</div></div>
+      </div>
+      <div class="dm-section">
+        <div class="dm-sec-label">Train Options</div>
+        <div class="train-card">
+          <div class="train-route"><i class="fas fa-train"></i> Option A — From London Euston</div>
+          <div class="train-times">Depart <strong>08:10</strong> → Arrive Birmingham <strong>09:27</strong> · 1hr 17min · Direct</div>
+        </div>
+        <div class="train-card">
+          <div class="train-route"><i class="fas fa-train"></i> Return — Birmingham to London</div>
+          <div class="train-times">Depart <strong>15:36</strong> → Arrive London Euston <strong>17:50</strong> · 2hr 14min · Direct</div>
+        </div>
+        <div class="train-card" style="border:1px dashed var(--border);background:transparent">
+          <div class="train-route"><i class="fas fa-train"></i> Option B — From Liverpool (if attending 11 Jun tour)</div>
+          <div class="train-times">Depart Liverpool <strong>17:33</strong> → Arrive Birmingham <strong>19:20</strong> · 1hr 47min · Direct</div>
+          <div class="train-or">OR</div>
+          <div class="train-times">Depart Liverpool <strong>18:12</strong> → Arrive Birmingham <strong>20:20</strong> · 1hr 47min · Direct</div>
+        </div>
+      </div>
+      <div class="dm-section">
+        <div class="dm-sec-label">Train Booking</div>
+        <div class="dm-row"><div class="dm-row-label">Book via</div><div class="dm-row-val"><a href="https://www.thetrainline.com" target="_blank">Trainline →</a></div></div>
+        <div class="dm-row"><div class="dm-row-label">BritRail Pass</div><div class="dm-row-val"><a href="https://www.acprail.com/rail-passes/britrail/britrail-pass" target="_blank">Book before UK travel →</a></div></div>
+        <div class="dm-row"><div class="dm-row-label">Note</div><div class="dm-row-val">BritRail consecutive pass — must be purchased before departing India</div></div>
+      </div>
+      <div class="dm-btn-row">
+        <a href="https://maps.google.com/?q=Woodcock+Street+Birmingham+B4+7ET" target="_blank" class="dm-btn primary"><i class="fas fa-map-marker-alt"></i> Open in Maps</a>
+        <a href="https://wmgrowth.zohobackstage.com/LondonTechWeekBirminghamRegionalVisit#/?lang=en" target="_blank" class="dm-btn secondary"><i class="fas fa-external-link-alt"></i> Event Website</a>
+        <a href="https://www.thetrainline.com" target="_blank" class="dm-btn gold"><i class="fas fa-train"></i> Book Train</a>
+      </div>`;
+  }
+
+  else if(type==='meeting'){
+    let m;
+    try{m=JSON.parse(dataStr);}catch{return;}
+    const TC={customer:'var(--teal)',investor:'var(--purple)',competitor:'var(--red)',partner:'var(--green)',other:'var(--muted)'};
+    const SRC={ian:'Ian (Consultant)',qaiser:'Qaiser (Consultant)',self:'Self / Direct',vineet:'Vineet Network',dinesh:'Dinesh Network',ltw:'London Tech Week',linkedin:'LinkedIn',referral:'Referral',other:'Other'};
+    const ocColors={hot:'var(--red)',warm:'var(--gold)',cold:'var(--muted)',pending:'var(--teal-dark)'};
+    const oc=m.outcome||'pending';
+    const mapUrl=m.location?'https://maps.google.com/?q='+encodeURIComponent(m.location):'';
+    const dateStr=m.date?new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}):'';
+
+    icon.style.background='#ede9fe';icon.innerHTML='🤝';
+    title.textContent=m.company||'Meeting';
+    body.innerHTML=`
+      <div class="dm-section">
+        <div class="dm-status-bar">
+          <div class="dm-status-dot" style="background:${ocColors[oc]}"></div>
+          <div class="dm-status-text" style="color:${ocColors[oc]}">${{hot:'Hot Lead 🔥',warm:'Warm Lead',cold:'Cold',pending:'Pending'}[oc]}</div>
+        </div>
+      </div>
+      <div class="dm-section">
+        <div class="dm-sec-label">Contact</div>
+        <div class="dm-row"><div class="dm-row-label">Company</div><div class="dm-row-val" style="font-weight:700;color:var(--teal-dark)">${m.company||'—'}</div></div>
+        <div class="dm-row"><div class="dm-row-label">Person</div><div class="dm-row-val">${m.person||'—'}${m.desig?' · '+m.desig:''}</div></div>
+        <div class="dm-row"><div class="dm-row-label">Type</div><div class="dm-row-val" style="color:${TC[m.type]||'var(--muted)'};font-weight:700;text-transform:capitalize">${m.type||'—'}</div></div>
+      </div>
+      <div class="dm-section">
+        <div class="dm-sec-label">Schedule</div>
+        ${dateStr?`<div class="dm-row"><div class="dm-row-label">Date</div><div class="dm-row-val">${dateStr}</div></div>`:''}
+        ${m.time?`<div class="dm-row"><div class="dm-row-label">Time</div><div class="dm-row-val">${m.time}</div></div>`:''}
+        ${m.location?`<div class="dm-row"><div class="dm-row-label">Location</div><div class="dm-row-val">${m.location}</div></div>`:''}
+        <div class="dm-row"><div class="dm-row-label">Source</div><div class="dm-row-val">${SRC[m.source||m.lead]||'—'}</div></div>
+      </div>
+      ${m.objective?`<div class="dm-section"><div class="dm-sec-label">Objective</div><div style="font-size:13px;color:var(--text);line-height:1.6;background:var(--bg);border-radius:8px;padding:10px 12px">${m.objective}</div></div>`:''}
+      ${m.talking?`<div class="dm-section"><div class="dm-sec-label">Talking Points</div><div style="font-size:12.5px;color:var(--text);line-height:1.65;background:var(--bg);border-radius:8px;padding:10px 12px">${m.talking}</div></div>`:''}
+      ${m.notes?`<div class="dm-section"><div class="dm-sec-label">Notes / Next Steps</div><div style="font-size:12.5px;color:var(--text);line-height:1.65;background:var(--bg);border-radius:8px;padding:10px 12px">${m.notes}</div></div>`:''}
+      <div class="dm-btn-row">
+        ${mapUrl?`<a href="${mapUrl}" target="_blank" class="dm-btn primary"><i class="fas fa-map-marker-alt"></i> Open in Maps</a>`:''}
+      </div>`;
+  }
+
+  ov.classList.add('open');
+}
+function closeDetailModal(){document.getElementById('detail-modal-ov').classList.remove('open');}
+
 
 // ── LTW ──
 function ltwTab(t,el){
@@ -1254,5 +1446,17 @@ loadAll().then(()=>{
   dismissLoader();
 });
 </script>
+
+<!-- DETAIL MODAL -->
+<div class="detail-modal-ov" id="detail-modal-ov" onclick="if(event.target===this)closeDetailModal()">
+  <div class="detail-modal">
+    <div class="dm-hd">
+      <div class="dm-hd-icon" id="dm-icon"></div>
+      <div class="dm-title" id="dm-title">Details</div>
+      <button class="dm-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="dm-body" id="dm-body"></div>
+  </div>
+</div>
 </body>
 </html>
