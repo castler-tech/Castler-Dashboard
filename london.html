@@ -255,7 +255,7 @@ body {
 
 .mtg-card { background: var(--white); border-radius: var(--r); margin-bottom: 10px; box-shadow: var(--card-shadow); border: 1px solid var(--border); overflow: hidden; }
 .mtg-top { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px 8px; }
-.mtg-co { font-size: 15px; font-weight: 700; color: var(--teal-dark); }
+.mtg-co { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 2px; }
 .mtg-type-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; margin-top: 1px; }
 .oc-badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .oc-badge.hot { background: #fff0f0; color: var(--red); }
@@ -263,7 +263,7 @@ body {
 .oc-badge.cold { background: #f1f5f9; color: #64748b; }
 .oc-badge.pending { background: var(--teal-light); color: var(--teal-dark); }
 .mtg-body { padding: 0 14px 13px; }
-.mtg-person { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.mtg-person { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 3px; }
 .mtg-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
 .mchip { display: inline-flex; align-items: center; gap: 3px; background: var(--bg); color: var(--muted); font-size: 11px; padding: 3px 8px; border-radius: 20px; }
 .mtg-txt { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 7px; }
@@ -801,9 +801,9 @@ textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
       <button class="m-close" onclick="closeMM()">✕</button>
     </div>
     <div class="m-body">
-      <div class="fg"><label>Company *</label><input type="text" id="m-co" placeholder="e.g. Barclays, HSBC..."></div>
+      <div class="fg"><label>Company / Organisation</label><input type="text" id="m-co" placeholder="e.g. Barclays, HSBC (optional)"></div>
       <div class="frow">
-        <div class="fg"><label>Contact Name *</label><input type="text" id="m-person" placeholder="Full name"></div>
+        <div class="fg"><label>Person Name *</label><input type="text" id="m-person" placeholder="Full name — this is the primary identifier"></div>
         <div class="fg"><label>Designation</label><input type="text" id="m-desig" placeholder="e.g. CTO"></div>
       </div>
       <div class="frow">
@@ -1023,7 +1023,7 @@ function renderAgenda(){
     ...fixed.map(f=>({...f,isMeeting:false})),
     ...dayMtgs.map(m=>({
       time:m.time||'TBD',
-      title:m.company||'Unknown',
+      title:m.person||m.company||'Unknown',
       fullMtgData:m,
       desc:`${m.person||''}${m.desig?' ('+m.desig+')':''}${m.objective?' — '+m.objective:''}`,
       person:'both',type:'meeting',location:m.location,outcome:m.outcome,isMeeting:true,
@@ -1056,11 +1056,11 @@ function renderAgenda(){
           <div class="tl-row">
             <div>
               <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--purple);margin-bottom:3px">Meeting · ${m.type||'General'}</div>
-              <div class="tl-title" style="color:var(--purple)">${m.company||'Unknown'}</div>
+              <div class="tl-title" style="color:var(--purple)">${m.person||'Unknown'}${m.desig?` <span style="font-size:12px;font-weight:500;opacity:.7">· ${m.desig}</span>`:''}</div>
             </div>
             ${badge}
           </div>
-          <div class="tl-mtg-person"><i class="fas fa-user"></i> ${m.person||'—'}${m.desig?' · '+m.desig:''}</div>
+          ${m.company?`<div class="tl-mtg-person"><i class="fas fa-building"></i> ${m.company}</div>`:''} 
           ${m.location?`<div class="tl-tags"><span class="tl-tag" style="background:#ede9fe;color:var(--purple)"><i class="fas fa-map-marker-alt"></i> ${m.location}</span></div>`:''}
           ${m.objective?`<div class="tl-desc" style="color:var(--purple);opacity:.75">${m.objective}</div>`:''}
           <div class="tl-actions">${mapBtn}<span style="font-size:10px;color:var(--purple);font-weight:600;opacity:.6">Tap for details →</span></div>
@@ -1152,7 +1152,7 @@ function openDetailModal(type, dataStr){
     const dateStr=m.date?new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}):'';
 
     icon.style.background='#ede9fe';icon.innerHTML='🤝';
-    title.textContent=m.company||'Meeting';
+    title.textContent=m.person||m.company||'Meeting';
     body.innerHTML=`
       <div class="dm-section">
         <div class="dm-status-bar">
@@ -1162,8 +1162,8 @@ function openDetailModal(type, dataStr){
       </div>
       <div class="dm-section">
         <div class="dm-sec-label">Contact</div>
-        <div class="dm-row"><div class="dm-row-label">Company</div><div class="dm-row-val" style="font-weight:700;color:var(--teal-dark)">${m.company||'—'}</div></div>
-        <div class="dm-row"><div class="dm-row-label">Person</div><div class="dm-row-val">${m.person||'—'}${m.desig?' · '+m.desig:''}</div></div>
+        <div class="dm-row"><div class="dm-row-label">Name</div><div class="dm-row-val" style="font-weight:700;color:var(--teal-dark)">${m.person||'—'}${m.desig?' <span style=\'color:var(--muted);font-weight:400\'>· '+m.desig+'</span>':''}</div></div>
+        <div class="dm-row"><div class="dm-row-label">Company</div><div class="dm-row-val">${m.company||'Individual / Not specified'}</div></div>
         <div class="dm-row"><div class="dm-row-label">Type</div><div class="dm-row-val" style="color:${TC[m.type]||'var(--muted)'};font-weight:700;text-transform:capitalize">${m.type||'—'}</div></div>
       </div>
       <div class="dm-section">
