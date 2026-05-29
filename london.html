@@ -1087,7 +1087,7 @@ function renderAgenda(){
       fullMtgData:m,
       desc:`${m.person||''}${m.desig?' ('+m.desig+')':''}${m.objective?' — '+m.objective:''}`,
       person:'both',type:'meeting',location:m.location,outcome:m.outcome,isMeeting:true,
-      mapUrl:m.location?'https://maps.google.com/?q='+encodeURIComponent(m.location):'',
+      mapUrl:m.location?(m.location.startsWith('http')?m.location:'https://maps.google.com/?q='+encodeURIComponent(m.location)):'',
     }))
   ];
   // Sort by time
@@ -1487,7 +1487,7 @@ function openDetailModal(type, dataStr){
     const SRC={ian:'Ian (Consultant)',qaiser:'Qaiser (Consultant)',self:'Self / Direct',vineet:'Vineet Network',dinesh:'Dinesh Network',ltw:'London Tech Week',linkedin:'LinkedIn',referral:'Referral',other:'Other'};
     const ocColors={hot:'var(--red)',warm:'var(--gold)',cold:'var(--muted)',pending:'var(--teal-dark)'};
     const oc=m.outcome||'pending';
-    const mapUrl=m.location?'https://maps.google.com/?q='+encodeURIComponent(m.location):'';
+    const mapUrl=m.location?(m.location.startsWith('http')?m.location:'https://maps.google.com/?q='+encodeURIComponent(m.location)):'';
     const dateStr=m.date?new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}):'';
 
     icon.style.background='#ede9fe';icon.innerHTML='🤝';
@@ -1644,7 +1644,7 @@ function renderMeetings(){
   const SRC={ian:'Ian',qaiser:'Qaiser',self:'Self',vineet:'Vineet',dinesh:'Dinesh',ltw:'LTW',linkedin:'LinkedIn',referral:'Referral',other:'Other'};
   list.innerHTML=fil.map(m=>{
     const ri=meetings.indexOf(m);
-    const mapUrl=m.location?'https://maps.google.com/?q='+encodeURIComponent(m.location):'';
+    const mapUrl=m.location?(m.location.startsWith('http')?m.location:'https://maps.google.com/?q='+encodeURIComponent(m.location)):'';
     const ds=m.date?new Date(m.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):'';
     return`<div class="mtg-card">
       <div class="mtg-top">
