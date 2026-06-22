@@ -525,12 +525,12 @@
           <thead>
             <tr>
               <th style="width:32px">#</th>
-              <th onclick="handleAppSort('name')">Application Name <span class="sort-icon${appSortBy==='name' ? ' active' : ''}">${appSortBy==='name' ? (appSortDesc ? '↓' : '↑') : ''}</span></th>
-              <th style="width:100px" onclick="handleAppSort('type')">Type <span class="sort-icon${appSortBy==='type' ? ' active' : ''}">${appSortBy==='type' ? (appSortDesc ? '↓' : '↑') : ''}</span></th>
-              <th style="width:110px" onclick="handleAppSort('spoc')">SPOC <span class="sort-icon${appSortBy==='spoc' ? ' active' : ''}">${appSortBy==='spoc' ? (appSortDesc ? '↓' : '↑') : ''}</span></th>
+              <th onclick="handleAppSort('name')">Application Name <span class="sort-icon" id="sort-app-name"></span></th>
+              <th style="width:100px" onclick="handleAppSort('type')">Type <span class="sort-icon" id="sort-app-type"></span></th>
+              <th style="width:110px" onclick="handleAppSort('spoc')">SPOC <span class="sort-icon" id="sort-app-spoc"></span></th>
               <th>About</th>
-              <th style="width:120px" onclick="handleAppSort('status')">Status <span class="sort-icon${appSortBy==='status' ? ' active' : ''}">${appSortBy==='status' ? (appSortDesc ? '↓' : '↑') : ''}</span></th>
-              <th style="width:100px" onclick="handleAppSort('due')">Due Date <span class="sort-icon${appSortBy==='due' ? ' active' : ''}">${appSortBy==='due' ? (appSortDesc ? '↓' : '↑') : ''}</span></th>
+              <th style="width:120px" onclick="handleAppSort('status')">Status <span class="sort-icon" id="sort-app-status"></span></th>
+              <th style="width:100px" onclick="handleAppSort('due')">Due Date <span class="sort-icon" id="sort-app-due"></span></th>
               <th style="min-width:160px">Remarks</th>
               <th style="width:80px">Actions</th>
             </tr>
@@ -734,6 +734,17 @@
     if (appSortBy === col) { appSortDesc = !appSortDesc; }
     else { appSortBy = col; appSortDesc = col === 'createdAt'; }
     sortApplications(); renderApplications();
+    updateAppSortIcons();
+  }
+  
+  function updateAppSortIcons() {
+    ['name','type','spoc','status','due'].forEach(col => {
+      const el = document.getElementById('sort-app-' + col);
+      if (el) {
+        el.className = 'sort-icon' + (appSortBy === col ? ' active' : '');
+        el.textContent = appSortBy === col ? (appSortDesc ? '↓' : '↑') : '';
+      }
+    });
   }
 
   function renderApplications() {
@@ -1028,6 +1039,17 @@
     if (taskSortBy === col) { taskSortDesc = !taskSortDesc; }
     else { taskSortBy = col; taskSortDesc = col === 'createdAt'; }
     sortTasks(); renderTasks();
+    updateTaskSortIcons();
+  }
+  
+  function updateTaskSortIcons() {
+    ['name','priority','spoc','status','due'].forEach(col => {
+      const el = document.getElementById('sort-task-' + col);
+      if (el) {
+        el.className = 'sort-icon' + (taskSortBy === col ? ' active' : '');
+        el.textContent = taskSortBy === col ? (taskSortDesc ? '↓' : '↑') : '';
+      }
+    });
   }
 
   function renderTasks() {
@@ -1154,6 +1176,7 @@
   loadFromServer().then(() => {
     sortTasks();
     renderTasks();
+    updateTaskSortIcons();
     renderApplications();
     renderMeetings();
     renderExtraColTags();
