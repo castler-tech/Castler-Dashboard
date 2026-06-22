@@ -841,11 +841,11 @@
       createdAt: editAppId !== null ? applications[editAppId].createdAt : new Date().toISOString()
     };
     if (editAppId !== null) applications[editAppId] = app; else applications.push(app);
-    debounceSave(); renderApplications(); closeAppModal();
+    debounceSave(); sortApplications(); renderApplications(); closeAppModal();
   }
 
   function editApp(i) { openAppModal(i); }
-  function deleteApp(i) { if (confirm('Delete this application?')) { applications.splice(i,1); debounceSave(); renderApplications(); } }
+  function deleteApp(i) { if (confirm('Delete this application?')) { applications.splice(i,1); debounceSave(); sortApplications(); renderApplications(); } }
 
   // ---- MEETINGS ----
   let meetings = [];
@@ -1162,11 +1162,11 @@
     if(!name){document.getElementById('field-name').focus();return;}
     const task = { name, desc:document.getElementById('field-desc').value.trim(), priority:document.getElementById('field-priority').value, status:document.getElementById('field-status').value, spoc:document.getElementById('field-spoc').value, due:document.getElementById('field-due').value, remarks:document.getElementById('field-remarks').value.trim(), members:[...selectedMembers], createdAt:editId!==null?tasks[editId].createdAt:new Date().toISOString() };
     if(editId!==null) tasks[editId]=task; else tasks.push(task);
-    debounceSave(); renderTasks(); closeModal();
+    debounceSave(); sortTasks(); renderTasks(); closeModal();
   }
 
   function editTask(idx) { openModal(idx); }
-  function deleteTask(idx) { if(confirm('Delete this task?')){tasks.splice(idx,1);debounceSave();renderTasks();} }
+  function deleteTask(idx) { if(confirm('Delete this task?')){tasks.splice(idx,1);debounceSave();sortTasks();renderTasks();} }
 
   document.addEventListener('click', e => {
     const mo=document.getElementById('members-options'); const ms=document.getElementById('members-display');
@@ -1181,7 +1181,9 @@
     sortTasks();
     renderTasks();
     updateTaskSortIcons();
+    sortApplications();
     renderApplications();
+    updateAppSortIcons();
     renderMeetings();
     renderExtraColTags();
     document.getElementById('loading-overlay').classList.add('hidden');
