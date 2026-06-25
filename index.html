@@ -619,6 +619,8 @@
   let taskSortDesc = true;
   let appSortBy = 'createdAt';
   let appSortDesc = true;
+  let showCompletedTasks = false;
+  let showCompletedMeetings = false;
   let selectedMembers = [], editId = null, currentFilter = 'all';
   let saveTimer = null;
 
@@ -877,6 +879,12 @@
     sel.innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
   }
 
+  function toggleCompletedMeetings() {
+    showCompletedMeetings = !showCompletedMeetings;
+    document.getElementById('toggle-completed-meetings').textContent = showCompletedMeetings ? 'Hide Completed' : 'Show Completed';
+    renderMeetings();
+  }
+
   function renderMeetings() {
     renderMeetingHeaders();
     updateCityFilter();
@@ -1028,10 +1036,17 @@
     document.getElementById('task-badge').textContent = tasks.filter(t=>t.status!=='done').length;
   }
 
+  function toggleCompletedTasks() {
+    showCompletedTasks = !showCompletedTasks;
+    document.getElementById('toggle-completed-tasks').textContent = showCompletedTasks ? 'Hide Completed' : 'Show Completed';
+    renderTasks();
+  }
+
   function sortTasks() {
     tasks.sort((a, b) => {
-      let aVal = a[taskSortBy] || '';
-      let bVal = b[taskSortBy] || '';
+      let sortCol = taskSortBy === 'createdAt' ? (taskSortBy) : taskSortBy;
+      let aVal = a[sortCol] || a.createdAt || '';
+      let bVal = b[sortCol] || b.createdAt || '';
       if (typeof aVal === 'string') aVal = aVal.toLowerCase();
       if (typeof bVal === 'string') bVal = bVal.toLowerCase();
       if (aVal < bVal) return taskSortDesc ? 1 : -1;
@@ -1160,7 +1175,7 @@
   function saveTask() {
     const name = document.getElementById('field-name').value.trim();
     if(!name){document.getElementById('field-name').focus();return;}
-    const task = { name, desc:document.getElementById('field-desc').value.trim(), priority:document.getElementById('field-priority').value, status:document.getElementById('field-status').value, spoc:document.getElementById('field-spoc').value, due:document.getElementById('field-due').value, remarks:document.getElementById('field-remarks').value.trim(), members:[...selectedMembers], createdAt:editId!==null?tasks[editId].createdAt:new Date().toISOString() };
+    const task = { name, desc:document.getElementById('field-desc').value.trim(), priority:document.getElementById('field-priority').value, status:document.getElementById('field-status').value, spoc:document.getElementById('field-spoc').value, due:document.getElementById('field-due').value, remarks:document.getElementById('field-remarks').value.trim(), members:[...selectedMembers], createdAt:editId!==null?tasks[editId].createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
     if(editId!==null) tasks[editId]=task; else tasks.push(task);
     debounceSave(); sortTasks(); renderTasks(); closeModal();
   }
