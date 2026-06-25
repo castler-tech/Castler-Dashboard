@@ -502,8 +502,9 @@
             <span style="color:var(--text-muted)">🔍</span>
             <input type="text" id="app-search" placeholder="Search applications..." oninput="renderApplications()">
           </div>
+          <button class="filter-btn" id="toggle-completed-applications" style="background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark);font-weight:600" onclick="toggleCompletedApplications()">Show Completed</button>
           <select class="filter-select" id="app-type-filter" onchange="renderApplications()">
-            <option value="">All Types</option>
+            <option value="">All Applications</option>
             <option value="membership">Membership</option>
             <option value="pitch">Pitch</option>
             <option value="grant">Grant</option>
@@ -623,6 +624,7 @@
   let appSortDesc = true;
   let showCompletedTasks = false;
   let showCompletedMeetings = false;
+  let showCompletedApplications = false;
   let selectedMembers = [], editId = null, currentFilter = 'all';
   let saveTimer = null;
 
@@ -761,6 +763,8 @@
     const status = document.getElementById('app-status-filter')?.value || '';
 
     const filtered = applications.filter(a => {
+      // Hide submitted/accepted applications unless toggle is on
+      if ((a.status === 'submitted' || a.status === 'accepted') && !showCompletedApplications) return false;
       const mq = !q || (a.name||'').toLowerCase().includes(q) || (a.about||'').toLowerCase().includes(q) || (a.spoc||'').toLowerCase().includes(q);
       const mt = !type || a.type === type;
       const ms = !status || a.status === status;
@@ -885,6 +889,12 @@
     showCompletedMeetings = !showCompletedMeetings;
     document.getElementById('toggle-completed-meetings').textContent = showCompletedMeetings ? 'Hide Completed' : 'Show Completed';
     renderMeetings();
+  }
+
+  function toggleCompletedApplications() {
+    showCompletedApplications = !showCompletedApplications;
+    document.getElementById('toggle-completed-applications').textContent = showCompletedApplications ? 'Hide Completed' : 'Show Completed';
+    renderApplications();
   }
 
   function renderMeetings() {
