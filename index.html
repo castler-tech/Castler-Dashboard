@@ -405,6 +405,7 @@
       </div>
       <div class="toolbar">
         <div class="toolbar-left">
+          <button id="toggle-completed-tasks" onclick="toggleCompletedTasks()" style="padding:8px 16px;background:#ca9324;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;margin-right:12px">Show Completed</button>
           <div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="search-input" placeholder="Search tasks..." oninput="renderTasks()"></div>
           <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
           <button class="filter-btn" onclick="setFilter('todo', this)">To Be Done</button>
@@ -459,6 +460,7 @@
       <!-- Toolbar -->
       <div class="meetings-toolbar">
         <div class="meetings-filters">
+          <button id="toggle-completed-meetings" onclick="toggleCompletedMeetings()" style="padding:8px 16px;background:#ca9324;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;margin-right:12px">Show Completed</button>
           <div class="search-box" style="min-width:180px">
             <span style="color:var(--text-muted)">🔍</span>
             <input type="text" id="m-search" placeholder="Search meetings..." oninput="renderMeetings()">
@@ -893,6 +895,8 @@
     const status = document.getElementById('m-status-filter')?.value || '';
 
     const filtered = meetings.filter(m => {
+      // Hide done meetings unless toggle is on
+      if (m.status === 'done' && !showCompletedMeetings) return false;
       const mq = !q || (m.name||'').toLowerCase().includes(q) || (m.about||'').toLowerCase().includes(q) || (m.city||'').toLowerCase().includes(q);
       const mc = !city || m.city === city;
       const ms = !status || m.status === status;
@@ -1074,6 +1078,8 @@
   function renderTasks() {
     const q = document.getElementById('search-input').value.toLowerCase();
     const filtered = tasks.filter(t => {
+      // Hide delivered tasks unless toggle is on
+      if (t.status === 'done' && !showCompletedTasks) return false;
       const ms = currentFilter==='all' || t.status===currentFilter;
       const mq = !q || t.name.toLowerCase().includes(q) || (t.spoc||'').toLowerCase().includes(q);
       return ms && mq;
