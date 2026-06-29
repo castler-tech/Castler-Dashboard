@@ -618,9 +618,9 @@
 
   let tasks = [];
   let members = ["Anshul","Manan","Kaustubh","Varun","Priyanshu","Preety"];
-  let taskSortBy = 'createdAt';
+  let taskSortBy = 'updatedAt';
   let taskSortDesc = true;
-  let appSortBy = 'createdAt';
+  let appSortBy = 'updatedAt';
   let appSortDesc = true;
   let showCompletedTasks = false;
   let showCompletedMeetings = false;
@@ -846,7 +846,8 @@
       status: document.getElementById('app-status').value,
       due: document.getElementById('app-due').value,
       remarks: document.getElementById('app-remarks').value.trim(),
-      createdAt: editAppId !== null ? applications[editAppId].createdAt : new Date().toISOString()
+      createdAt: editAppId !== null ? applications[editAppId].createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     if (editAppId !== null) applications[editAppId] = app; else applications.push(app);
     debounceSave(); sortApplications(); renderApplications(); closeAppModal();
