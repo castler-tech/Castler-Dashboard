@@ -91,16 +91,18 @@
   .btn-primary { background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,144,156,0.3); }
 
-  .table-wrap { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+  /* overflow-x: auto (not hidden) so a wide table scrolls instead of being clipped.
+     overflow-y stays hidden to preserve the rounded corners. */
+  .table-wrap { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow-x: auto; overflow-y: hidden; }
   table { width: 100%; border-collapse: collapse; }
   thead tr { background: #f0f8f9; border-bottom: 2px solid var(--border); }
-  th { padding: 12px 15px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+  th { padding: 12px 10px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
   tbody tr { border-bottom: 1px solid var(--border); transition: background 0.13s; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #f8fcfd; }
-  td { padding: 13px 15px; font-size: 13px; vertical-align: middle; }
-  .task-name { font-weight: 600; color: var(--teal-dark); max-width: 560px; overflow-wrap: break-word; }
-  .task-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; max-width: 560px; overflow-wrap: break-word; }
+  td { padding: 13px 10px; font-size: 13px; vertical-align: middle; }
+  .task-name { font-weight: 600; color: var(--teal-dark); max-width: 280px; overflow-wrap: break-word; }
+  .task-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; max-width: 280px; overflow-wrap: break-word; }
   /* Long unbroken strings (URLs, tokens) must wrap to the next line rather than
      stretching the column. Applies to every table cell as a safety net. */
   td { overflow-wrap: break-word; }
@@ -120,7 +122,7 @@
   .member-avatars { display: flex; }
   .m-avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; border: 2px solid white; margin-left: -5px; flex-shrink: 0; }
   .m-avatar:first-child { margin-left: 0; }
-  .spoc-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--teal-light); color: var(--teal-dark); font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .spoc-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--teal-light); color: var(--teal-dark); font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .due-date { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
   .due-date.overdue { color: #e53e3e; font-weight: 600; }
   .due-date.soon { color: var(--gold); font-weight: 600; }
@@ -420,15 +422,15 @@
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th style="width:32px">#</th>
+            <th style="width:28px">#</th>
             <th>Task</th>
-            <th style="width:90px">Priority</th>
-            <th style="width:120px">SPOC</th>
-            <th style="width:100px">Members</th>
-            <th style="width:110px">Status</th>
-            <th style="width:100px">Due Date</th>
-            <th style="min-width:180px">Remarks</th>
-            <th style="width:80px">Actions</th>
+            <th style="width:74px">Priority</th>
+            <th style="width:92px">SPOC</th>
+            <th style="width:80px">Members</th>
+            <th style="width:104px">Status</th>
+            <th style="width:84px">Due Date</th>
+            <th style="min-width:150px">Remarks</th>
+            <th style="width:64px">Actions</th>
           </tr></thead>
           <tbody id="tasks-tbody"></tbody>
         </table>
@@ -1114,8 +1116,8 @@
         <td>${(t.members||[]).length?`<div class="member-avatars">${mavs}${more}</div>`:'<span style="color:var(--text-muted)">—</span>'}</td>
         <td><span class="status-badge ${t.status}" onclick="cycleStatus(${ri})"><span class="status-dot"></span>${statusLabel(t.status)}</span></td>
         <td><span class="due-date ${dueDateClass(t.due)}">${formatDate(t.due)}</span></td>
-        <td style="min-width:180px;max-width:260px">
-          ${t.remarks ? `<div style="font-size:12px;color:var(--text-muted);white-space:pre-wrap;word-break:break-word;line-height:1.5;max-width:420px">${t.remarks}</div>` : '<span style="color:var(--text-muted)">—</span>'}
+        <td style="min-width:150px">
+          ${t.remarks ? `<div style="font-size:12px;color:var(--text-muted);white-space:pre-wrap;word-break:break-word;line-height:1.5;max-width:175px">${t.remarks}</div>` : '<span style="color:var(--text-muted)">—</span>'}
         </td>
         <td><div class="action-btns">
           <button class="icon-btn" onclick="editTask(${ri})">✏️</button>
